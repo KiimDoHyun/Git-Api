@@ -2,20 +2,25 @@ import {
     Box,
     Button,
     Card,
+    Dialog,
     Input,
     InputLabel,
     Pagination,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
-import { searchRepoApi } from "../Api/git";
+import { getIssueApi, getRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
 import { rc_repo_repoList } from "../Store/repo";
 
 const MainPage = () => {
-    const [searchRepoResult, getSearchRepo] = useAxios(searchRepoApi);
+    const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
+    const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
+
     const [searchValue, setSearchValue] = useState("");
     const [searchPage, setSearchPage] = useState(1);
+
+    const [openDialog, setOpenDialog] = useState(false);
 
     // 저장된 repo 리스트
     const [repoList, setRepoList] = useRecoilState(rc_repo_repoList);
@@ -58,8 +63,16 @@ const MainPage = () => {
         }
     }, []);
 
+    // 저장된 리스트 클릭
+    /*
+    클릭했을때 이슈를 조회하는것으로 우선 구현함
+    */
     const onClickDetail = useCallback((item) => {
         console.log("item: ", item);
+        const user = item.owner.login;
+        const repo = item.name;
+        getIssueRepo({ user, repo });
+        setOpenDialog(true);
     }, []);
 
     // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
@@ -76,10 +89,14 @@ const MainPage = () => {
     }, [searchPage, searchValue]);
 
     const pageCount = useMemo(() => {
-        if (!searchRepoResult.data) return 0;
+        if (!getRepoResult.data) return 0;
 
-        return Math.ceil(searchRepoResult.data.total_count / 30);
-    }, [searchRepoResult]);
+        return Math.ceil(getRepoResult.data.total_count / 30);
+    }, [getRepoResult]);
+
+    useEffect(() => {
+        console.log("getIssueResult: ", getIssueResult);
+    }, [getIssueResult]);
 
     return (
         <div>
@@ -93,15 +110,15 @@ const MainPage = () => {
                 </form>
             </div>
             <div className="searchResultCountArea">
-                {searchRepoResult.data?.total_count || 0} 건
+                {getRepoResult.data?.total_count || 0} 건
             </div>
-            {searchRepoResult.isLoading && (
+            {getRepoResult.isLoading && (
                 <div className="loadingArea">Loading...</div>
             )}
-            {searchRepoResult.error && <div className="errorArea">Error!</div>}
+            {getRepoResult.error && <div className="errorArea">Error!</div>}
             <h1>조회된 데이터</h1>
             <div className="searchResultArea">
-                {searchRepoResult.data?.items.map((item, idx) => (
+                {getRepoResult.data?.items.map((item, idx) => (
                     <Box key={idx}>
                         <Card variant="outlined">
                             {item.name}
@@ -136,6 +153,10 @@ const MainPage = () => {
                     ))}
                 </div>
             </div>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <div></div>
+            </Dialog>
         </div>
     );
 };
