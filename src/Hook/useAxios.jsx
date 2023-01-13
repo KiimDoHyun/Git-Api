@@ -33,6 +33,7 @@ const useAxios = (initialApi) => {
         let error = null;
         let _apiResponse = null;
         try {
+            console.log("???", body.current);
             const apiResponse = await requestApi_real(body.current);
             /*
                 200번대 응답 (성공)인 경우 data에 값이 할당
@@ -63,7 +64,7 @@ const useAxios = (initialApi) => {
         if (state.isLoading) {
             callApi();
         }
-    }, [state]);
+    }, [state, callApi]);
 
     return [state, getData, changeApi];
 };
