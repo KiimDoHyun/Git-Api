@@ -161,6 +161,7 @@ const MainPage = () => {
 
     return (
         <div>
+            {/* 검색 영역 */}
             <div className="searchArea">
                 <form onSubmit={onSubmit}>
                     <InputLabel htmlFor="searchRepo">검색</InputLabel>
@@ -178,6 +179,7 @@ const MainPage = () => {
             )}
             {getRepoResult.error && <div className="errorArea">Error!</div>}
 
+            {/* Repo 조회 결과 영역 */}
             <h1>조회된 데이터</h1>
             <div className="searchResultArea">
                 {getRepoResult.data?.items.map((item, idx) => (
@@ -196,7 +198,8 @@ const MainPage = () => {
                 count={pageCount}
                 onChange={onChangeSearchPage}
             />
-            {/*  저장된 데이터 */}
+
+            {/*  저장된 데이터 영역 */}
             <div>
                 <h1>저장된 데이터</h1>
                 <div>
@@ -216,6 +219,7 @@ const MainPage = () => {
                 </div>
             </div>
 
+            {/* 특정 데이터 Issue 영역 */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <div>
                     <List>
