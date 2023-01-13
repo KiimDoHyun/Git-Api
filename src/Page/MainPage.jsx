@@ -31,6 +31,10 @@ const MainPage = () => {
         // getSearchRepo({ searchParams: inputValue, page: searchPage });
     }, []);
 
+    const onClickAdd = useCallback((item) => {
+        console.log("item: ", item);
+    }, []);
+
     useEffect(() => {
         // 에러가 발생한다면?
         // 데이터는 안보일 것이다.
@@ -71,7 +75,12 @@ const MainPage = () => {
             <div className="searchResultArea">
                 {searchRepoResult.data?.items.map((item, idx) => (
                     <Box key={idx}>
-                        <Card variant="outlined">{item.name}</Card>
+                        <Card variant="outlined">
+                            {item.name}
+                            <Button onClick={() => onClickAdd(item)}>
+                                추가하기
+                            </Button>
+                        </Card>
                     </Box>
                 ))}
             </div>
