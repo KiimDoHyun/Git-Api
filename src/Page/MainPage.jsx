@@ -58,6 +58,10 @@ const MainPage = () => {
         }
     }, []);
 
+    const onClickDetail = useCallback((item) => {
+        console.log("item: ", item);
+    }, []);
+
     // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
     useEffect(() => {
         const data = JSON.stringify(repoList);
@@ -121,6 +125,9 @@ const MainPage = () => {
                         <Box key={idx}>
                             <Card variant="outlined">
                                 {item.name}
+                                <Button onClick={() => onClickDetail(item)}>
+                                    자세히
+                                </Button>
                                 <Button onClick={() => onClickDelete(item)}>
                                     제거하기
                                 </Button>
