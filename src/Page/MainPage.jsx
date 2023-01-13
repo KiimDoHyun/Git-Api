@@ -5,6 +5,9 @@ import {
     Dialog,
     Input,
     InputLabel,
+    List,
+    ListItem,
+    ListItemText,
     Pagination,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,6 +20,7 @@ const MainPage = () => {
     const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
     const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
 
+    const [selectedRepoName, setSelectedRepoName] = useState("");
     const [searchValue, setSearchValue] = useState("");
     const [searchPage, setSearchPage] = useState(1);
 
@@ -71,6 +75,7 @@ const MainPage = () => {
         console.log("item: ", item);
         const user = item.owner.login;
         const repo = item.name;
+        setSelectedRepoName(repo);
         getIssueRepo({ user, repo });
         setOpenDialog(true);
     }, []);
@@ -155,7 +160,19 @@ const MainPage = () => {
             </div>
 
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <div></div>
+                <div>
+                    <List>
+                        {getIssueResult.data?.map((item, idx) => (
+                            <ListItem key={idx}>
+                                <ListItemText>{selectedRepoName}</ListItemText>
+                                <ListItemText
+                                    primary={item.title}
+                                    secondary={item.body}
+                                />
+                            </ListItem>
+                        ))}
+                    </List>
+                </div>
             </Dialog>
         </div>
     );
