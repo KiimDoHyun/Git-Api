@@ -7,13 +7,18 @@ import {
     Pagination,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRecoilState } from "recoil";
 import { searchRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
+import { rc_repo_repoList } from "../Store/repo";
 
 const MainPage = () => {
     const [searchRepoResult, getSearchRepo] = useAxios(searchRepoApi);
     const [searchValue, setSearchValue] = useState("");
     const [searchPage, setSearchPage] = useState(1);
+
+    // 저장된 repo 리스트
+    const [repoList, setRepoList] = useRecoilState(rc_repo_repoList);
 
     const onChangeSearchPage = useCallback((_, value) => {
         setSearchPage(value);
@@ -31,14 +36,27 @@ const MainPage = () => {
         // getSearchRepo({ searchParams: inputValue, page: searchPage });
     }, []);
 
-    const onClickAdd = useCallback((item) => {
-        console.log("item: ", item);
-    }, []);
+    const onClickAdd = useCallback(
+        (item) => {
+            if (repoList.length === 4) {
+                alert("더이상 추가할 수 없습니다.");
+                return;
+            }
 
-    useEffect(() => {
-        // 에러가 발생한다면?
-        // 데이터는 안보일 것이다.
-    }, [searchRepoResult]);
+            if (window.confirm("추가하시겠습니까?")) {
+                setRepoList((prev) => [...prev, item]);
+            }
+        },
+        [repoList, setRepoList]
+    );
+
+    const onClickDelete = useCallback((item) => {
+        if (window.confirm("제거하시겠습니까?")) {
+            setRepoList((prev) =>
+                prev.filter((filterItem) => filterItem.id !== item.id)
+            );
+        }
+    }, []);
 
     useEffect(() => {
         if (!searchValue) return;
@@ -92,6 +110,18 @@ const MainPage = () => {
             {/*  저장된 데이터 */}
             <div>
                 <h1>저장된 데이터</h1>
+                <div>
+                    {repoList.map((item, idx) => (
+                        <Box key={idx}>
+                            <Card variant="outlined">
+                                {item.name}
+                                <Button onClick={() => onClickDelete(item)}>
+                                    제거하기
+                                </Button>
+                            </Card>
+                        </Box>
+                    ))}
+                </div>
             </div>
         </div>
     );

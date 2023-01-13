@@ -8,7 +8,7 @@ const SetRepoList = () => {
     // localStorage에 저장된 repoList를 Recoil에 저장한다.
     useEffect(() => {
         const data = JSON.parse(window.localStorage.getItem("repoList"));
-        setRepoList(data);
+        setRepoList(data || []);
     }, [setRepoList]);
 
     return <></>;
