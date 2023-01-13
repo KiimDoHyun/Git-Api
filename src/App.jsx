@@ -10,6 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useAxios from "./Hook/useAxios";
 import { searchRepoApi } from "./Api/git";
+import SetRepoList from "./Setting/SetRepoList";
 function App() {
     const [searchRepoResult, getSearchRepo] = useAxios(searchRepoApi);
     const [searchValue, setSearchValue] = useState("");
@@ -51,6 +52,7 @@ function App() {
 
     return (
         <div className="App">
+            <SetRepoList />
             <div className="searchArea">
                 <form onSubmit={onSubmit}>
                     <InputLabel htmlFor="searchRepo">검색</InputLabel>
@@ -67,12 +69,11 @@ function App() {
                 <div className="loadingArea">Loading...</div>
             )}
             {searchRepoResult.error && <div className="errorArea">Error!</div>}
+            <h1>조회된 데이터</h1>
             <div className="searchResultArea">
                 {searchRepoResult.data?.items.map((item, idx) => (
-                    <Box>
-                        <Card variant="outlined" key={idx}>
-                            {item.name}
-                        </Card>
+                    <Box key={idx}>
+                        <Card variant="outlined">{item.name}</Card>
                     </Box>
                 ))}
             </div>
@@ -81,6 +82,10 @@ function App() {
                 count={pageCount}
                 onChange={onChangeSearchPage}
             />
+            {/*  저장된 데이터 */}
+            <div>
+                <h1>저장된 데이터</h1>
+            </div>
         </div>
     );
 }
