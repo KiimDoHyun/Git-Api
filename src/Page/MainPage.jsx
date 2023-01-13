@@ -21,6 +21,7 @@ const MainPage = () => {
     const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
 
     const [selectedRepoName, setSelectedRepoName] = useState("");
+    const [selectedRepoURL, setSelectedRepoURL] = useState("");
     const [searchValue, setSearchValue] = useState("");
     const [searchPage, setSearchPage] = useState(1);
 
@@ -76,9 +77,17 @@ const MainPage = () => {
         const user = item.owner.login;
         const repo = item.name;
         setSelectedRepoName(repo);
+        setSelectedRepoURL(item.html_url);
         getIssueRepo({ user, repo });
         setOpenDialog(true);
     }, []);
+
+    const onClickIssueList = useCallback(() => {
+        console.log("selectedRepoURL: ", selectedRepoURL);
+        if (window.confirm("해당 저장소로 이동하시겠습니까?")) {
+            window.open(selectedRepoURL);
+        }
+    }, [selectedRepoURL]);
 
     // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
     useEffect(() => {
@@ -169,6 +178,9 @@ const MainPage = () => {
                                     primary={item.title}
                                     secondary={item.body}
                                 />
+                                <ListItemText onClick={onClickIssueList}>
+                                    자세히
+                                </ListItemText>
                             </ListItem>
                         ))}
                     </List>
