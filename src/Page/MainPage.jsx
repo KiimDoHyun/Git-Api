@@ -58,6 +58,12 @@ const MainPage = () => {
         }
     }, []);
 
+    // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
+    useEffect(() => {
+        const data = JSON.stringify(repoList);
+        window.localStorage.setItem("repoList", data);
+    }, [repoList]);
+
     useEffect(() => {
         if (!searchValue) return;
 
