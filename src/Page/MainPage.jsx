@@ -20,18 +20,30 @@ const MainPage = () => {
     const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
     const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
 
+    const [currentDetailRepo, setCurrentDetailRepo] = useState(null);
+
     const [selectedRepoName, setSelectedRepoName] = useState("");
     const [selectedRepoURL, setSelectedRepoURL] = useState("");
     const [searchValue, setSearchValue] = useState("");
     const [searchPage, setSearchPage] = useState(1);
+
+    const [searchIssuePage, setSearchIssuePage] = useState(1);
+    const [searchIssueUser, setSearchIssueUser] = useState("");
+    const [searchIssueRepo, setSearchIssueRepo] = useState("");
 
     const [openDialog, setOpenDialog] = useState(false);
 
     // 저장된 repo 리스트
     const [repoList, setRepoList] = useRecoilState(rc_repo_repoList);
 
+    // Repo 조회 page
     const onChangeSearchPage = useCallback((_, value) => {
         setSearchPage(value);
+    }, []);
+
+    // Repo 조회 page
+    const onChangeIssuePage = useCallback((_, value) => {
+        setSearchIssuePage(value);
     }, []);
 
     const onSubmit = useCallback((e) => {
@@ -76,9 +88,15 @@ const MainPage = () => {
         console.log("item: ", item);
         const user = item.owner.login;
         const repo = item.name;
+        setCurrentDetailRepo(item);
+
+        setSearchIssueUser(user);
+        setSearchIssueRepo(repo);
         setSelectedRepoName(repo);
+        setSearchIssuePage(1);
+
         setSelectedRepoURL(item.html_url);
-        getIssueRepo({ user, repo });
+
         setOpenDialog(true);
     }, []);
 
@@ -95,12 +113,41 @@ const MainPage = () => {
         window.localStorage.setItem("repoList", data);
     }, [repoList]);
 
+    // Repo 조회
     useEffect(() => {
         if (!searchValue) return;
 
         // search!
         getSearchRepo({ searchParams: searchValue, page: searchPage });
     }, [searchPage, searchValue]);
+
+    // Issue 조회
+    useEffect(() => {
+        if (!openDialog || !searchIssueUser || !searchIssueRepo) return;
+
+        getIssueRepo({
+            user: searchIssueUser,
+            repo: searchIssueRepo,
+            page: searchIssuePage,
+        });
+    }, [openDialog, searchIssuePage, searchIssueUser, searchIssueRepo]);
+
+    //
+    /*
+    이슈개수 정보는 해당 Repo 에 존재함
+    
+    저장된 Repo 정보는 변하지 않기 때문에
+
+    새로 조회하는 과정이 필요할 듯
+
+    이슈 조회는 현재 Open 상태 이슈만 가져옴 -> 테스트 완료
+    open_issues_count
+     */
+    const issuePageCount = useMemo(() => {
+        if (!currentDetailRepo) return 0;
+
+        return Math.ceil(currentDetailRepo.open_issues_count / 30);
+    }, [currentDetailRepo]);
 
     const pageCount = useMemo(() => {
         if (!getRepoResult.data) return 0;
@@ -130,6 +177,7 @@ const MainPage = () => {
                 <div className="loadingArea">Loading...</div>
             )}
             {getRepoResult.error && <div className="errorArea">Error!</div>}
+
             <h1>조회된 데이터</h1>
             <div className="searchResultArea">
                 {getRepoResult.data?.items.map((item, idx) => (
@@ -173,10 +221,14 @@ const MainPage = () => {
                     <List>
                         {getIssueResult.data?.map((item, idx) => (
                             <ListItem key={idx}>
-                                <ListItemText>{selectedRepoName}</ListItemText>
-                                <ListItemText
+                                {/* <ListItemText>{selectedRepoName}</ListItemText> */}
+                                {/* <ListItemText
                                     primary={item.title}
                                     secondary={item.body}
+                                /> */}
+                                <ListItemText
+                                    primary={selectedRepoName}
+                                    secondary={item.title}
                                 />
                                 <ListItemText onClick={onClickIssueList}>
                                     자세히
@@ -184,6 +236,11 @@ const MainPage = () => {
                             </ListItem>
                         ))}
                     </List>
+                    <Pagination
+                        page={searchIssuePage}
+                        count={issuePageCount}
+                        onChange={onChangeIssuePage}
+                    />
                 </div>
             </Dialog>
         </div>
