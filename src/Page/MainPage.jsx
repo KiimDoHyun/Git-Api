@@ -4,6 +4,7 @@ import {
     Card,
     CardContent,
     Dialog,
+    Divider,
     Input,
     InputLabel,
     List,
@@ -30,6 +31,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useSnackbar } from "notistack";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SaveIcon from "@mui/icons-material/Save";
 
 const ID_SAVED_AREA = "SAVED_AREA";
 const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
@@ -216,6 +218,9 @@ const MainPage = () => {
         else if (start === ID_SAVED_AREA && end === ID_SAVED_AREA) {
             type = "REORDER";
             msg = "데이터의 순서가 변경되었습니다.";
+        } else {
+            type = "ERROR";
+            msg = "잘못된 이동입니다.";
         }
 
         return { type, msg };
@@ -241,6 +246,7 @@ const MainPage = () => {
 
     // 삭제영역
     const [showDeleteArea, setShowDeleteArea] = useState(false);
+    const [showSaveArea, setShowSaveArea] = useState(false);
     const onDragStart = useCallback((e) => {
         // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
         dragInfo.current.start = e;
@@ -249,11 +255,14 @@ const MainPage = () => {
             source: { droppableId },
         } = e;
 
-        // 만약 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
+        // 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
         if (droppableId === ID_SAVED_AREA) {
             setShowDeleteArea(true);
             console.log("저장영역에서 시작");
-        } else {
+        }
+        // 조회 영역에서 드래그를 하는 경우 저장 영역을 표시해 준다.
+        else {
+            setShowSaveArea(true);
             console.log("조회영역에서 시작");
         }
     }, []);
@@ -328,8 +337,13 @@ const MainPage = () => {
                     setRepoList(copySavedData2);
                     enqueueSnackbar(msg, { variant: "info" });
                     break;
+
+                default:
+                    enqueueSnackbar(msg, { variant: "info" });
+                    break;
             }
             setShowDeleteArea(false);
+            setShowSaveArea(false);
         },
         [enqueueSnackbar, checkMovement, repoList, getRepoResult.data]
     );
@@ -345,10 +359,17 @@ const MainPage = () => {
                         <Droppable droppableId={ID_SAVED_AREA}>
                             {(provided, snapshot) => (
                                 <div
-                                    className="showArea"
+                                    className={
+                                        showSaveArea
+                                            ? "showArea activeSaveArea"
+                                            : "showArea"
+                                    }
                                     ref={provided.innerRef}
                                     {...provided.droppableProps}
                                 >
+                                    <div className="IconCover saveIcon">
+                                        <SaveIcon />
+                                    </div>
                                     {repoList.map((item, idx) => (
                                         <Draggable
                                             key={item.id}
@@ -385,6 +406,7 @@ const MainPage = () => {
                                 </div>
                             )}
                         </Droppable>
+                        <Divider />
                         <Droppable droppableId={ID_DELETE_AREA}>
                             {(provided, snapshot) => (
                                 <div
@@ -397,7 +419,7 @@ const MainPage = () => {
                                     {...provided.droppableProps}
                                 >
                                     {provided.placeholder}
-                                    <div className="deleteIconCover">
+                                    <div className="IconCover deleteIcon">
                                         <DeleteForeverIcon />
                                     </div>
                                 </div>
@@ -551,8 +573,8 @@ const SavedAreaBlock = styled.div`
     padding: 10px;
     box-sizing: border-box;
 
-    // flex: 2;
-    width: 450px;
+    flex: 1;
+    // width: 450px;
 
     text-align: left;
     display: flex;
@@ -568,11 +590,19 @@ const SavedAreaBlock = styled.div`
         flex-direction: column;
         justify-content: space-between;
         flex: 9;
+        position: relative;
     }
 
     .showArea {
-        height: 50%;
+        border: 2px solid #fff0;
+        padding: 10px;
+        box-sizing: border-box;
     }
+
+    .activeSaveArea {
+        border: 2px solid skyblue;
+    }
+
     .showArea .repoItem {
         margin-bottom: 10px;
     }
@@ -585,7 +615,7 @@ const SavedAreaBlock = styled.div`
         opacity: 0;
     }
 
-    .deleteIconCover {
+    .IconCover {
         position: absolute;
         left: calc(50% - 30px);
         top: -60px;
@@ -593,7 +623,6 @@ const SavedAreaBlock = styled.div`
         width: 50px;
         height: 50px;
         border-radius: 100%;
-        background-color: tomato;
 
         display: flex;
         align-items: center;
@@ -603,15 +632,23 @@ const SavedAreaBlock = styled.div`
         opacity: 0;
     }
 
+    .saveIcon {
+        background-color: skyblue;
+    }
+    .deleteIcon {
+        background-color: tomato;
+    }
+
     .activeDeleteArea {
         opacity: 1;
     }
 
-    .activeDeleteArea .deleteIconCover {
+    .activeSaveArea .IconCover,
+    .activeDeleteArea .IconCover {
         opacity: 1;
     }
 
-    .deleteIconCover svg {
+    .IconCover svg {
         fill: white;
     }
 `;
