@@ -7,8 +7,10 @@ import {
     InputLabel,
     List,
     ListItem,
+    ListItemButton,
     ListItemText,
     Pagination,
+    Paper,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -163,42 +165,63 @@ const MainPage = () => {
     return (
         <MainPageBlock>
             <SavedAreaBlock>
-                {/* Repo 조회 결과 영역 */}
                 <h2>My Repo List</h2>
                 {repoList.map((item, idx) => (
-                    <Box key={idx}>
-                        <Card variant="outlined">
-                            {item.name}
-                            <Button onClick={() => onClickDetail(item)}>
-                                자세히
-                            </Button>
-                            <Button onClick={() => onClickDelete(item)}>
-                                제거하기
-                            </Button>
-                        </Card>
-                    </Box>
+                    <Paper key={idx} elevation={0} className="repoItem">
+                        <ListItem>
+                            {/* <ListItemButton> */}
+                            <ListItemText
+                                primary={item.name}
+                                secondary={item.owner.login}
+                            />
+                            {/* </ListItemButton> */}
+                        </ListItem>
+                    </Paper>
+
+                    // <Box key={idx}>
+                    //     <Card variant="outlined">
+                    //         {item.name}
+                    //         <Button onClick={() => onClickDetail(item)}>
+                    //             자세히
+                    //         </Button>
+                    //         <Button onClick={() => onClickDelete(item)}>
+                    //             제거하기
+                    //         </Button>
+                    //     </Card>
+                    // </Box>
                 ))}
             </SavedAreaBlock>
             <RepoListAreaBlock>
                 <div className="searchArea">
                     <form onSubmit={onSubmit}>
-                        <InputLabel htmlFor="searchRepo">검색</InputLabel>
+                        <InputLabel htmlFor="searchRepo">Repo Name</InputLabel>
                         <Input id="searchRepo" name="searchRepo" type="text" />
                         <Button variant="contained" type="submit">
                             Hi
                         </Button>
                     </form>
                 </div>
+                {/* Repo 조회 결과 영역 */}
                 <div className="repoListArea">
                     {getRepoResult.data?.items.map((item, idx) => (
-                        <Box key={idx}>
-                            <Card variant="outlined">
-                                {item.name}
-                                <Button onClick={() => onClickAdd(item)}>
-                                    추가하기
-                                </Button>
-                            </Card>
-                        </Box>
+                        <Paper key={idx} elevation={1} className="repoItem">
+                            <ListItem>
+                                {/* <ListItemButton> */}
+                                <ListItemText
+                                    primary={item.name}
+                                    secondary={item.owner.login}
+                                />
+                                {/* </ListItemButton> */}
+                            </ListItem>
+                        </Paper>
+                        // <Box key={idx}>
+                        //     <Card variant="outlined">
+                        //         {item.name}
+                        //         <Button onClick={() => onClickAdd(item)}>
+                        //             추가하기
+                        //         </Button>
+                        //     </Card>
+                        // </Box>
                     ))}
                 </div>
                 <div className="pagerArea">
@@ -266,7 +289,7 @@ const RepoListAreaBlock = styled.div`
     box-sizing: border-box;
 
     flex: 4;
-    background-color: #d7d7d7;
+    background-color: #f6f8fa;
 
     display: grid;
     grid-template-rows: 50px 1fr 50px;
@@ -276,13 +299,13 @@ const RepoListAreaBlock = styled.div`
     .searchArea {
         width: 100%;
         height: 50px;
-        background-color: skyblue;
+        // background-color: skyblue;
     }
 
     .repoListArea {
         display: grid;
-        gap: 10px;
-        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        grid-template-columns: 1fr 1fr 1fr;
         overflow: scroll;
     }
 
@@ -291,6 +314,11 @@ const RepoListAreaBlock = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .repoItem {
+        width: 400px;
+        height: 100px;
     }
 `;
 export default MainPage;
