@@ -538,6 +538,13 @@ const MainPageBlock = styled.div`
     .css-q0jhri-MuiInputBase-root-MuiInput-root:after {
         border-bottom: 2px solid black;
     }
+
+    .repoItem {
+        width: 400px;
+        height: 100px;
+
+        text-align: left;
+    }
 `;
 
 const SavedAreaBlock = styled.div`
@@ -646,11 +653,6 @@ const RepoListAreaBlock = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    .repoItem {
-        width: 400px;
-        height: 100px;
     }
 `;
 export default MainPage;
