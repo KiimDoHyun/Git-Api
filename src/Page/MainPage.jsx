@@ -12,16 +12,32 @@ import {
     Pagination,
     Paper,
 } from "@mui/material";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { getIssueApi, getRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
 import { rc_repo_repoList } from "../Store/repo";
 import SearchIcon from "@mui/icons-material/Search";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useSnackbar } from "notistack";
+
+const ID_SAVED_AREA = "SAVED_AREA";
+const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
+const ID_DELETE_AREA = "DELETE_AREA";
+
 const MainPage = () => {
     const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
     const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
+
+    // 검색 결과
+    const [repoSearchResult, setRepoSearchResult] = useState([]);
 
     const [currentDetailRepo, setCurrentDetailRepo] = useState(null);
 
@@ -158,119 +174,324 @@ const MainPage = () => {
         return Math.ceil(getRepoResult.data.total_count / 30);
     }, [getRepoResult]);
 
+    // 드래그 관련
+    const dragInfo = useRef({ start: null, end: null });
+    const { enqueueSnackbar } = useSnackbar();
+
+    /*
+    정상적인 이동에 해당하는 경우
+
+    1. 조회된 영역에서 저장된 영역으로 이동하는 경우 (저장하기 기능에 해당한다.)
+    2. 저장된 영역에서 제거 영역으로 이동하는 경우 (삭제하기 기능에 해당한다.)
+    3. 저장된 영역에서 저장된 영역으로 이동하는 경우 (+ 순서 변경에 해당한다.)
+    */
+    // 이동 체크
+    const checkMovement = useCallback((start, end) => {
+        let type = "ERROR";
+        let msg = "";
+
+        // 에러
+        if (start === ID_SEARCH_RESULT_AREA && end === ID_SEARCH_RESULT_AREA) {
+            type = "ERROR";
+            msg = "조회된 데이터의 순서는 변경할 수 없습니다.";
+        } else if (start === ID_SAVED_AREA && end === ID_SEARCH_RESULT_AREA) {
+            type = "ERROR";
+            msg = "이미 저장된 데이터를 조회 영역으로 이동할 수 없습니다.";
+        }
+        // 정상 이동
+        // 1번 경우에 해당함
+        else if (start === ID_SEARCH_RESULT_AREA && end === ID_SAVED_AREA) {
+            type = "SAVE";
+            msg = "데이터가 저장되었습니다.";
+        }
+        // 2번 경우에 해당함
+        else if (start === ID_SAVED_AREA && end === ID_DELETE_AREA) {
+            type = "DELETE";
+            msg = "데이터가 제거되었습니다.";
+        }
+        // 3번 경우에 해당함
+        else if (start === ID_SAVED_AREA && end === ID_SAVED_AREA) {
+            type = "REORDER";
+            msg = "데이터의 순서가 변경되었습니다.";
+        }
+
+        return { type, msg };
+    }, []);
+
     useEffect(() => {
-        console.log("getIssueResult: ", getIssueResult);
-    }, [getIssueResult]);
+        if (getRepoResult.data) {
+            setRepoSearchResult(getRepoResult.data.items);
+            // setRepoSearchResult(getRepoResult.data.items.filter((filterItem) => ));
+        } else {
+            setRepoSearchResult([]);
+        }
+    }, [repoList, getRepoResult]);
+
+    // 삭제영역
+    const [showDeleteArea, setShowDeleteArea] = useState(false);
+    const onDragStart = useCallback((e) => {
+        // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
+        dragInfo.current.start = e;
+
+        const {
+            source: { droppableId },
+        } = e;
+
+        // 만약 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
+        if (droppableId === ID_SAVED_AREA) {
+            setShowDeleteArea(true);
+            console.log("저장영역에서 시작");
+        } else {
+            console.log("조회영역에서 시작");
+        }
+    }, []);
+    const onDragEnd = useCallback(
+        (e) => {
+            const startID = dragInfo.current.start.source.droppableId;
+            const endID = e.destination.droppableId;
+
+            console.log("getRepoResult: ", getRepoResult);
+
+            // 이동 체크
+            const { type, msg } = checkMovement(startID, endID);
+
+            switch (type) {
+                case "ERROR":
+                    enqueueSnackbar(msg, { variant: "warning" });
+                    break;
+                case "SAVE":
+                    if (repoList.length === 4) {
+                        enqueueSnackbar("최대 4개까지 저장 가능합니다.", {
+                            variant: "warning",
+                        });
+                        break;
+                    }
+                    const listData = getRepoResult["data"]["items"] || [];
+                    const target = listData.find(
+                        (findItem) => String(findItem.id) === e.draggableId
+                    );
+                    const copySavedData1 = [...repoList];
+                    copySavedData1.splice(e.destination.index, 0, target);
+
+                    setRepoList(copySavedData1);
+
+                    setRepoSearchResult((prevSearchData) =>
+                        prevSearchData.filter(
+                            (filterItem) =>
+                                String(filterItem.id) !== e.draggableId
+                        )
+                    );
+                    enqueueSnackbar(msg, { variant: "success" });
+                    break;
+
+                case "DELETE":
+                    console.log("e: ", e);
+                    console.log("repoList: ", repoList);
+                    setRepoList((prevSavedData) =>
+                        prevSavedData.filter(
+                            (filterItem) =>
+                                String(filterItem.id) !== e.draggableId
+                        )
+                    );
+                    enqueueSnackbar(msg, { variant: "error" });
+                    break;
+
+                case "REORDER":
+                    const copySavedData2 = [...repoList];
+                    const target2 =
+                        copySavedData2[dragInfo.current.start.source.index];
+
+                    copySavedData2.splice(
+                        dragInfo.current.start.source.index,
+                        1
+                    );
+                    copySavedData2.splice(e.destination.index, 0, target2);
+
+                    setRepoList(copySavedData2);
+                    enqueueSnackbar(msg, { variant: "info" });
+                    break;
+            }
+            setShowDeleteArea(false);
+        },
+        [enqueueSnackbar, checkMovement, repoList, getRepoResult.data]
+    );
 
     return (
         <MainPageBlock>
-            <SavedAreaBlock>
-                <h2>My Repo List</h2>
-                {repoList.map((item, idx) => (
-                    <Paper key={idx} elevation={0} className="repoItem">
-                        <ListItem>
-                            {/* <ListItemButton> */}
-                            <ListItemText
-                                primary={item.name}
-                                secondary={item.owner.login}
+            <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+                <SavedAreaBlock>
+                    <Droppable droppableId={ID_SAVED_AREA}>
+                        {(provided, snapshot) => (
+                            <div
+                                className="showArea"
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                            >
+                                <h2>My Repo List</h2>
+                                {repoList.map((item, idx) => (
+                                    <Draggable
+                                        key={item.id}
+                                        draggableId={String(item.id)}
+                                        index={idx}
+                                    >
+                                        {(provided) => (
+                                            <Paper
+                                                elevation={0}
+                                                className="repoItem"
+                                                ref={provided.innerRef}
+                                                {...provided.dragHandleProps}
+                                                {...provided.draggableProps}
+                                            >
+                                                <ListItem>
+                                                    {/* <ListItemButton> */}
+                                                    <ListItemText
+                                                        primary={item.name}
+                                                        secondary={
+                                                            item.owner.login
+                                                        }
+                                                    />
+                                                    {/* </ListItemButton> */}
+                                                </ListItem>
+                                            </Paper>
+                                        )}
+                                    </Draggable>
+
+                                    // <Box key={idx}>
+                                    //     <Card variant="outlined">
+                                    //         {item.name}
+                                    //         <Button onClick={() => onClickDetail(item)}>
+                                    //             자세히
+                                    //         </Button>
+                                    //         <Button onClick={() => onClickDelete(item)}>
+                                    //             제거하기
+                                    //         </Button>
+                                    //     </Card>
+                                    // </Box>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                    <Droppable droppableId={ID_DELETE_AREA}>
+                        {(provided, snapshot) => (
+                            <div
+                                className="deleteArea"
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                            >
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </SavedAreaBlock>
+
+                <RepoListAreaBlock>
+                    <div className="searchArea">
+                        <form onSubmit={onSubmit}>
+                            <InputLabel htmlFor="searchRepo"></InputLabel>
+                            <Input
+                                id="searchRepo"
+                                placeholder="Repo Name"
+                                name="searchRepo"
+                                type="text"
                             />
-                            {/* </ListItemButton> */}
-                        </ListItem>
-                    </Paper>
+                            <Button
+                                variant="text"
+                                type="submit"
+                                size="small"
+                                color="inherit"
+                            >
+                                <SearchIcon />
+                            </Button>
+                        </form>
+                    </div>
+                    {/* Repo 조회 결과 영역 */}
+                    <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
+                        {(provided, snapshot) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="repoListArea"
+                            >
+                                {repoSearchResult.map((item, idx) => (
+                                    <Draggable
+                                        key={item.id}
+                                        draggableId={String(item.id)}
+                                        index={idx}
+                                    >
+                                        {(provided) => (
+                                            <Paper
+                                                elevation={1}
+                                                className="repoItem"
+                                                ref={provided.innerRef}
+                                                {...provided.dragHandleProps}
+                                                {...provided.draggableProps}
+                                            >
+                                                <ListItem>
+                                                    {/* <ListItemButton> */}
+                                                    <ListItemText
+                                                        primary={item.name}
+                                                        secondary={
+                                                            item.owner.login
+                                                        }
+                                                    />
+                                                    {/* </ListItemButton> */}
+                                                </ListItem>
+                                            </Paper>
+                                        )}
 
-                    // <Box key={idx}>
-                    //     <Card variant="outlined">
-                    //         {item.name}
-                    //         <Button onClick={() => onClickDetail(item)}>
-                    //             자세히
-                    //         </Button>
-                    //         <Button onClick={() => onClickDelete(item)}>
-                    //             제거하기
-                    //         </Button>
-                    //     </Card>
-                    // </Box>
-                ))}
-            </SavedAreaBlock>
-            <RepoListAreaBlock>
-                <div className="searchArea">
-                    <form onSubmit={onSubmit}>
-                        <InputLabel htmlFor="searchRepo"></InputLabel>
-                        <Input
-                            id="searchRepo"
-                            placeholder="Repo Name"
-                            name="searchRepo"
-                            type="text"
+                                        {/* <Box key={idx}>
+                            <Card variant="outlined">
+                                {item.name}
+                                <Button onClick={() => onClickAdd(item)}>
+                                    추가하기
+                                </Button>
+                            </Card>
+                        </Box> */}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                    <div className="pagerArea">
+                        <Pagination
+                            page={searchPage}
+                            count={pageCount}
+                            onChange={onChangeSearchPage}
                         />
-                        <Button
-                            variant="text"
-                            type="submit"
-                            size="small"
-                            color="inherit"
-                        >
-                            <SearchIcon />
-                        </Button>
-                    </form>
-                </div>
-                {/* Repo 조회 결과 영역 */}
-                <div className="repoListArea">
-                    {getRepoResult.data?.items.map((item, idx) => (
-                        <Paper key={idx} elevation={1} className="repoItem">
-                            <ListItem>
-                                {/* <ListItemButton> */}
-                                <ListItemText
-                                    primary={item.name}
-                                    secondary={item.owner.login}
-                                />
-                                {/* </ListItemButton> */}
-                            </ListItem>
-                        </Paper>
-                        // <Box key={idx}>
-                        //     <Card variant="outlined">
-                        //         {item.name}
-                        //         <Button onClick={() => onClickAdd(item)}>
-                        //             추가하기
-                        //         </Button>
-                        //     </Card>
-                        // </Box>
-                    ))}
-                </div>
-                <div className="pagerArea">
-                    <Pagination
-                        page={searchPage}
-                        count={pageCount}
-                        onChange={onChangeSearchPage}
-                    />
-                </div>
-            </RepoListAreaBlock>
+                    </div>
+                </RepoListAreaBlock>
 
-            {/* 특정 데이터 Issue 영역 */}
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <div>
-                    <List>
-                        {getIssueResult.data?.map((item, idx) => (
-                            <ListItem key={idx}>
-                                {/* <ListItemText>{selectedRepoName}</ListItemText> */}
-                                {/* <ListItemText
+                {/* 특정 데이터 Issue 영역 */}
+                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                    <div>
+                        <List>
+                            {getIssueResult.data?.map((item, idx) => (
+                                <ListItem key={idx}>
+                                    {/* <ListItemText>{selectedRepoName}</ListItemText> */}
+                                    {/* <ListItemText
                                     primary={item.title}
                                     secondary={item.body}
                                 /> */}
-                                <ListItemText
-                                    primary={selectedRepoName}
-                                    secondary={item.title}
-                                />
-                                <ListItemText onClick={onClickIssueList}>
-                                    자세히
-                                </ListItemText>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Pagination
-                        page={searchIssuePage}
-                        count={issuePageCount}
-                        onChange={onChangeIssuePage}
-                    />
-                </div>
-            </Dialog>
+                                    <ListItemText
+                                        primary={selectedRepoName}
+                                        secondary={item.title}
+                                    />
+                                    <ListItemText onClick={onClickIssueList}>
+                                        자세히
+                                    </ListItemText>
+                                </ListItem>
+                            ))}
+                        </List>
+                        <Pagination
+                            page={searchIssuePage}
+                            count={issuePageCount}
+                            onChange={onChangeIssuePage}
+                        />
+                    </div>
+                </Dialog>
+            </DragDropContext>
         </MainPageBlock>
     );
 };
@@ -297,6 +518,20 @@ const SavedAreaBlock = styled.div`
 
     h2 {
         padding-left: 16px;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .showArea {
+        height: 50%;
+        background-color: skyblue;
+    }
+
+    .deleteArea {
+        height: 30%;
+        background-color: tomato;
     }
 `;
 const RepoListAreaBlock = styled.div`
@@ -327,7 +562,7 @@ const RepoListAreaBlock = styled.div`
 
     .repoListArea {
         display: grid;
-        gap: 20px;
+        gap: 10px;
         grid-template-columns: 1fr 1fr 1fr;
         overflow: scroll;
     }
