@@ -597,6 +597,9 @@ const SavedAreaBlock = styled.div`
         border: 2px solid #fff0;
         padding: 10px;
         box-sizing: border-box;
+
+        min-height: 300px;
+        min-width: 424px;
     }
 
     .activeSaveArea {
