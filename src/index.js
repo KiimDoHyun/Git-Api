@@ -10,14 +10,17 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { BrowserRouter } from "react-router-dom";
+import { SnackbarProvider } from "notistack";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     // <React.StrictMode>
     <RecoilRoot>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <SnackbarProvider maxSnack={5}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </SnackbarProvider>
     </RecoilRoot>
     // </React.StrictMode>
 );

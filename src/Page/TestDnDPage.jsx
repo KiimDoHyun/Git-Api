@@ -1,3 +1,4 @@
+import { useSnackbar } from "notistack";
 import React, { useCallback, useRef, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
@@ -7,6 +8,14 @@ const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
 const ID_DELETE_AREA = "DELETE_AREA";
 
 const TestDnDPage = () => {
+    // 스낵바 관련
+    /*
+    드래그앤 드롭으로 특정 이벤트가 발동될 때 단순 alert 대신 스낵바로 변경
+    */
+
+    // const aa = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
+
     const dragInfo = useRef({ start: null, end: null });
 
     const [showDeleteArea, setShowDeleteArea] = useState(false);
@@ -100,6 +109,9 @@ const TestDnDPage = () => {
         // 만약 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
         if (droppableId === ID_SAVED_AREA) {
             setShowDeleteArea(true);
+            console.log("저장영역에서 시작");
+        } else {
+            console.log("조회영역에서 시작");
         }
     }, []);
 
@@ -113,15 +125,15 @@ const TestDnDPage = () => {
 
             switch (type) {
                 case "ERROR":
-                    console.warn(msg);
+                    enqueueSnackbar(msg, { variant: "warning" });
                     break;
                 case "SAVE":
                     if (savedData.length === 4) {
-                        alert("최대 4개까지 저장 가능합니다.");
+                        enqueueSnackbar("최대 4개까지 저장 가능합니다.", {
+                            variant: "warning",
+                        });
                         break;
                     }
-                    console.log("저장하기");
-                    console.log("저장 Index: ", e.destination.index);
                     const target = searchData.find(
                         (findItem) => findItem.id === e.draggableId
                     );
@@ -135,19 +147,19 @@ const TestDnDPage = () => {
                             (filterItem) => filterItem.id !== e.draggableId
                         )
                     );
+                    enqueueSnackbar(msg, { variant: "success" });
                     break;
 
                 case "DELETE":
-                    console.log("제거하기");
                     setSavedData((prevSavedData) =>
                         prevSavedData.filter(
                             (filterItem) => filterItem.id !== e.draggableId
                         )
                     );
+                    enqueueSnackbar(msg, { variant: "error" });
                     break;
 
                 case "REORDER":
-                    console.log("순서 변경하기");
                     const copySavedData2 = [...savedData];
                     const target2 =
                         copySavedData2[dragInfo.current.start.source.index];
@@ -158,19 +170,13 @@ const TestDnDPage = () => {
                     );
                     copySavedData2.splice(e.destination.index, 0, target2);
 
-                    console.log("FROM", dragInfo.current.start.source.index);
-                    console.log("TO", e.destination.index);
                     setSavedData(copySavedData2);
+                    enqueueSnackbar(msg, { variant: "info" });
                     break;
             }
             setShowDeleteArea(false);
-
-            console.log("startID: ", startID);
-            console.log("endID: ", endID);
-            console.log("onDragStart: ", dragInfo.current.start);
-            console.log("onDragEnd: ", e);
         },
-        [checkMovement, savedData, searchData]
+        [enqueueSnackbar, checkMovement, savedData, searchData]
     );
 
     return (
@@ -274,6 +280,10 @@ const TestDnDPage = () => {
                     <div className="box" />
                 </div> */}
             </DragDropContext>
+
+            {/* <Snackbar open={true}>
+                <Alert severity="success">성공쓰</Alert>
+            </Snackbar> */}
         </TestDnDPageBlock>
     );
 };
@@ -290,10 +300,16 @@ const TestDnDPageBlock = styled.div`
 
     gap: 20px;
 
-    .Area1,
-    .Area2 {
+    .Area1 {
         flex: 1;
 
+    }
+    .Area2 {
+        flex: 4;
+
+    }
+    .Area1,
+    .Area2 {
         border: 1px solid;
         padding: 20px;
         box-sizing: border-box;
