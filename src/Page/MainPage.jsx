@@ -607,12 +607,16 @@ const SavedAreaBlock = styled.div`
         margin-bottom: 10px;
     }
     .deleteArea {
-        background-color: tomato;
+        // background-color: tomato;
         position: relative;
 
         transition: 0.3s;
         height: 200px;
         opacity: 0;
+
+        border: 2px solid tomato;
+        padding: 10px;
+        box-sizing: border-box;
     }
 
     .IconCover {
