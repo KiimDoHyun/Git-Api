@@ -447,6 +447,12 @@ const MainPage = () => {
                                 <SearchIcon />
                             </Button>
                         </form>
+                        <Typography variant="body2" color="text.secondary">
+                            Result:{" "}
+                            {getRepoResult.data
+                                ? getRepoResult.data.total_count
+                                : 0}
+                        </Typography>
                     </div>
                     {/* Repo 조회 결과 영역 */}
                     <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
