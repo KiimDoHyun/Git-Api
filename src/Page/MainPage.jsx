@@ -297,6 +297,12 @@ const MainPage = () => {
                     break;
 
                 case "REORDER":
+                    if (
+                        dragInfo.current.start.source.index ===
+                        e.destination.index
+                    ) {
+                        break;
+                    }
                     const copySavedData2 = [...repoList];
                     const target2 =
                         copySavedData2[dragInfo.current.start.source.index];
