@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
+import styled from "styled-components";
 import { getIssueApi, getRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
 import { rc_repo_repoList } from "../Store/repo";
@@ -160,64 +161,54 @@ const MainPage = () => {
     }, [getIssueResult]);
 
     return (
-        <div>
-            {/* 검색 영역 */}
-            <div className="searchArea">
-                <form onSubmit={onSubmit}>
-                    <InputLabel htmlFor="searchRepo">검색</InputLabel>
-                    <Input id="searchRepo" name="searchRepo" type="text" />
-                    <Button variant="contained" type="submit">
-                        Hi
-                    </Button>
-                </form>
-            </div>
-            <div className="searchResultCountArea">
-                {getRepoResult.data?.total_count || 0} 건
-            </div>
-            {getRepoResult.isLoading && (
-                <div className="loadingArea">Loading...</div>
-            )}
-            {getRepoResult.error && <div className="errorArea">Error!</div>}
-
-            {/* Repo 조회 결과 영역 */}
-            <h1>조회된 데이터</h1>
-            <div className="searchResultArea">
-                {getRepoResult.data?.items.map((item, idx) => (
+        <MainPageBlock>
+            <SavedAreaBlock>
+                {/* Repo 조회 결과 영역 */}
+                <h2>My Repo List</h2>
+                {repoList.map((item, idx) => (
                     <Box key={idx}>
                         <Card variant="outlined">
                             {item.name}
-                            <Button onClick={() => onClickAdd(item)}>
-                                추가하기
+                            <Button onClick={() => onClickDetail(item)}>
+                                자세히
+                            </Button>
+                            <Button onClick={() => onClickDelete(item)}>
+                                제거하기
                             </Button>
                         </Card>
                     </Box>
                 ))}
-            </div>
-            <Pagination
-                page={searchPage}
-                count={pageCount}
-                onChange={onChangeSearchPage}
-            />
-
-            {/*  저장된 데이터 영역 */}
-            <div>
-                <h1>저장된 데이터</h1>
-                <div>
-                    {repoList.map((item, idx) => (
+            </SavedAreaBlock>
+            <RepoListAreaBlock>
+                <div className="searchArea">
+                    <form onSubmit={onSubmit}>
+                        <InputLabel htmlFor="searchRepo">검색</InputLabel>
+                        <Input id="searchRepo" name="searchRepo" type="text" />
+                        <Button variant="contained" type="submit">
+                            Hi
+                        </Button>
+                    </form>
+                </div>
+                <div className="repoListArea">
+                    {getRepoResult.data?.items.map((item, idx) => (
                         <Box key={idx}>
                             <Card variant="outlined">
                                 {item.name}
-                                <Button onClick={() => onClickDetail(item)}>
-                                    자세히
-                                </Button>
-                                <Button onClick={() => onClickDelete(item)}>
-                                    제거하기
+                                <Button onClick={() => onClickAdd(item)}>
+                                    추가하기
                                 </Button>
                             </Card>
                         </Box>
                     ))}
                 </div>
-            </div>
+                <div className="pagerArea">
+                    <Pagination
+                        page={searchPage}
+                        count={pageCount}
+                        onChange={onChangeSearchPage}
+                    />
+                </div>
+            </RepoListAreaBlock>
 
             {/* 특정 데이터 Issue 영역 */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
@@ -247,8 +238,59 @@ const MainPage = () => {
                     />
                 </div>
             </Dialog>
-        </div>
+        </MainPageBlock>
     );
 };
 
+const MainPageBlock = styled.div`
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+`;
+
+const SavedAreaBlock = styled.div`
+    padding: 10px;
+    box-sizing: border-box;
+
+    flex: 1;
+
+    text-align: left;
+
+    h2 {
+        padding-left: 16px;
+    }
+`;
+const RepoListAreaBlock = styled.div`
+    padding: 10px;
+    box-sizing: border-box;
+
+    flex: 4;
+    background-color: #d7d7d7;
+
+    display: grid;
+    grid-template-rows: 50px 1fr 50px;
+
+    gap: 10px;
+
+    .searchArea {
+        width: 100%;
+        height: 50px;
+        background-color: skyblue;
+    }
+
+    .repoListArea {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+        overflow: scroll;
+    }
+
+    .pagerArea {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+`;
 export default MainPage;
