@@ -305,7 +305,7 @@ const TestDnDPageBlock = styled.div`
 
     }
     .Area2 {
-        flex: 4;
+        flex: 1;
 
     }
     .Area1,
