@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     Card,
+    CardContent,
     Dialog,
     Input,
     InputLabel,
@@ -11,6 +12,7 @@ import {
     ListItemText,
     Pagination,
     Paper,
+    Typography,
 } from "@mui/material";
 import React, {
     useCallback,
@@ -27,6 +29,7 @@ import { rc_repo_repoList } from "../Store/repo";
 import SearchIcon from "@mui/icons-material/Search";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useSnackbar } from "notistack";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 const ID_SAVED_AREA = "SAVED_AREA";
 const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
@@ -220,8 +223,17 @@ const MainPage = () => {
 
     useEffect(() => {
         if (getRepoResult.data) {
-            setRepoSearchResult(getRepoResult.data.items);
-            // setRepoSearchResult(getRepoResult.data.items.filter((filterItem) => ));
+            // setRepoSearchResult(getRepoResult.data.items);
+            // 조회 영역의 중복 데이터 제거
+            // 드래드그앤 드롭이벤트와 중복해서 발생중임
+            setRepoSearchResult(
+                getRepoResult.data.items.filter(
+                    (filterItem) =>
+                        !repoList.find(
+                            (findItem) => findItem.id === filterItem.id
+                        )
+                )
+            );
         } else {
             setRepoSearchResult([]);
         }
@@ -326,69 +338,72 @@ const MainPage = () => {
         <MainPageBlock>
             <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 <SavedAreaBlock>
-                    <Droppable droppableId={ID_SAVED_AREA}>
-                        {(provided, snapshot) => (
-                            <div
-                                className="showArea"
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                            >
-                                <h2>My Repo List</h2>
-                                {repoList.map((item, idx) => (
-                                    <Draggable
-                                        key={item.id}
-                                        draggableId={String(item.id)}
-                                        index={idx}
-                                    >
-                                        {(provided) => (
-                                            <Paper
-                                                elevation={0}
-                                                className="repoItem"
-                                                ref={provided.innerRef}
-                                                {...provided.dragHandleProps}
-                                                {...provided.draggableProps}
-                                            >
-                                                <ListItem>
-                                                    {/* <ListItemButton> */}
-                                                    <ListItemText
-                                                        primary={item.name}
-                                                        secondary={
-                                                            item.owner.login
-                                                        }
-                                                    />
-                                                    {/* </ListItemButton> */}
-                                                </ListItem>
-                                            </Paper>
-                                        )}
-                                    </Draggable>
-
-                                    // <Box key={idx}>
-                                    //     <Card variant="outlined">
-                                    //         {item.name}
-                                    //         <Button onClick={() => onClickDetail(item)}>
-                                    //             자세히
-                                    //         </Button>
-                                    //         <Button onClick={() => onClickDelete(item)}>
-                                    //             제거하기
-                                    //         </Button>
-                                    //     </Card>
-                                    // </Box>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                    <Droppable droppableId={ID_DELETE_AREA}>
-                        {(provided, snapshot) => (
-                            <div
-                                className="deleteArea"
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                            >
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
+                    <div className="headerArea">
+                        <h2>My Repo List</h2>
+                    </div>
+                    <div className="contentsArea">
+                        <Droppable droppableId={ID_SAVED_AREA}>
+                            {(provided, snapshot) => (
+                                <div
+                                    className="showArea"
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                >
+                                    {repoList.map((item, idx) => (
+                                        <Draggable
+                                            key={item.id}
+                                            draggableId={String(item.id)}
+                                            index={idx}
+                                        >
+                                            {(provided) => (
+                                                <Card
+                                                    className="repoItem"
+                                                    ref={provided.innerRef}
+                                                    {...provided.dragHandleProps}
+                                                    {...provided.draggableProps}
+                                                >
+                                                    <CardContent>
+                                                        <Typography
+                                                            gutterBottom
+                                                            variant="h5"
+                                                            component="div"
+                                                        >
+                                                            {item.name}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="text.secondary"
+                                                        >
+                                                            {item.owner.login}
+                                                        </Typography>
+                                                    </CardContent>
+                                                </Card>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                        <Droppable droppableId={ID_DELETE_AREA}>
+                            {(provided, snapshot) => (
+                                <div
+                                    className={
+                                        showDeleteArea
+                                            ? "deleteArea activeDeleteArea"
+                                            : "deleteArea"
+                                    }
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                >
+                                    {provided.placeholder}
+                                    <div className="deleteIconCover">
+                                        <DeleteForeverIcon />
+                                    </div>
+                                </div>
+                            )}
+                        </Droppable>
+                    </div>
                 </SavedAreaBlock>
 
                 <RepoListAreaBlock>
@@ -426,34 +441,45 @@ const MainPage = () => {
                                         index={idx}
                                     >
                                         {(provided) => (
-                                            <Paper
-                                                elevation={1}
+                                            <Card
                                                 className="repoItem"
                                                 ref={provided.innerRef}
                                                 {...provided.dragHandleProps}
                                                 {...provided.draggableProps}
                                             >
-                                                <ListItem>
-                                                    {/* <ListItemButton> */}
-                                                    <ListItemText
-                                                        primary={item.name}
-                                                        secondary={
-                                                            item.owner.login
-                                                        }
-                                                    />
-                                                    {/* </ListItemButton> */}
-                                                </ListItem>
-                                            </Paper>
+                                                <CardContent>
+                                                    <Typography
+                                                        gutterBottom
+                                                        variant="h5"
+                                                        component="div"
+                                                    >
+                                                        {item.name}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        {item.owner.login}
+                                                    </Typography>
+                                                </CardContent>
+                                            </Card>
+                                            // <Paper
+                                            //     elevation={1}
+                                            //     className="repoItem"
+                                            //     ref={provided.innerRef}
+                                            //     {...provided.dragHandleProps}
+                                            //     {...provided.draggableProps}
+                                            // >
+                                            //     <ListItem>
+                                            //         <ListItemText
+                                            //             primary={item.name}
+                                            //             secondary={
+                                            //                 item.owner.login
+                                            //             }
+                                            //         />
+                                            //     </ListItem>
+                                            // </Paper>
                                         )}
-
-                                        {/* <Box key={idx}>
-                            <Card variant="outlined">
-                                {item.name}
-                                <Button onClick={() => onClickAdd(item)}>
-                                    추가하기
-                                </Button>
-                            </Card>
-                        </Box> */}
                                     </Draggable>
                                 ))}
                                 {provided.placeholder}
@@ -518,33 +544,75 @@ const SavedAreaBlock = styled.div`
     padding: 10px;
     box-sizing: border-box;
 
-    flex: 1;
+    // flex: 2;
+    width: 450px;
 
     text-align: left;
-
-    h2 {
-        padding-left: 16px;
-    }
-
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+
+    .headerArea {
+        padding-left: 16px;
+        flex: 1;
+    }
+
+    .contentsArea {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 9;
+    }
 
     .showArea {
         height: 50%;
-        background-color: skyblue;
+    }
+    .showArea .repoItem {
+        margin-bottom: 10px;
+    }
+    .deleteArea {
+        background-color: tomato;
+        position: relative;
+
+        transition: 0.3s;
+        height: 200px;
+        opacity: 0;
     }
 
-    .deleteArea {
-        height: 30%;
+    .deleteIconCover {
+        position: absolute;
+        left: calc(50% - 30px);
+        top: -60px;
+
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
         background-color: tomato;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: 0.3s;
+        opacity: 0;
+    }
+
+    .activeDeleteArea {
+        opacity: 1;
+    }
+
+    .activeDeleteArea .deleteIconCover {
+        opacity: 1;
+    }
+
+    .deleteIconCover svg {
+        fill: white;
     }
 `;
 const RepoListAreaBlock = styled.div`
     padding: 10px;
     box-sizing: border-box;
 
-    flex: 4;
+    flex: 6;
     background-color: #f6f8fa;
 
     display: grid;
