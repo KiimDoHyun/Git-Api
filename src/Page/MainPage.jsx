@@ -580,6 +580,8 @@ const SavedAreaBlock = styled.div`
     display: flex;
     flex-direction: column;
 
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
     .headerArea {
         padding-left: 16px;
         flex: 1;
@@ -690,6 +692,9 @@ const RepoListAreaBlock = styled.div`
         gap: 10px;
         grid-template-columns: 1fr 1fr 1fr;
         overflow: scroll;
+
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .pagerArea {
