@@ -701,6 +701,9 @@ const RepoListAreaBlock = styled.div`
 
         border-top: 1px solid rgba(0, 0, 0, 0.12);
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+        padding: 10px;
+        box-sizing: border-box;
     }
 
     .pagerArea {
