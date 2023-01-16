@@ -18,7 +18,7 @@ import styled from "styled-components";
 import { getIssueApi, getRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
 import { rc_repo_repoList } from "../Store/repo";
-
+import SearchIcon from "@mui/icons-material/Search";
 const MainPage = () => {
     const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
     const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
@@ -194,10 +194,20 @@ const MainPage = () => {
             <RepoListAreaBlock>
                 <div className="searchArea">
                     <form onSubmit={onSubmit}>
-                        <InputLabel htmlFor="searchRepo">Repo Name</InputLabel>
-                        <Input id="searchRepo" name="searchRepo" type="text" />
-                        <Button variant="contained" type="submit">
-                            Hi
+                        <InputLabel htmlFor="searchRepo"></InputLabel>
+                        <Input
+                            id="searchRepo"
+                            placeholder="Repo Name"
+                            name="searchRepo"
+                            type="text"
+                        />
+                        <Button
+                            variant="text"
+                            type="submit"
+                            size="small"
+                            color="inherit"
+                        >
+                            <SearchIcon />
                         </Button>
                     </form>
                 </div>
@@ -270,6 +280,11 @@ const MainPageBlock = styled.div`
     height: 100vh;
 
     display: flex;
+
+    // 강제 색 변경
+    .css-q0jhri-MuiInputBase-root-MuiInput-root:after {
+        border-bottom: 2px solid black;
+    }
 `;
 
 const SavedAreaBlock = styled.div`
@@ -299,7 +314,15 @@ const RepoListAreaBlock = styled.div`
     .searchArea {
         width: 100%;
         height: 50px;
-        // background-color: skyblue;
+        display: flex;
+        align-items: center;
+    }
+
+    .searchArea form {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
     }
 
     .repoListArea {
