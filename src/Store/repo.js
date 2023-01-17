@@ -19,3 +19,8 @@ export const re_repo_searchPage = atom({
     key: "re_repo_searchPage",
     default: 1,
 });
+
+export const re_repo_searchPageIsLoading = atom({
+    key: "re_repo_searchPageIsLoading",
+    default: false,
+});

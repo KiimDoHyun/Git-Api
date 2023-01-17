@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { getIssueApi } from "../../Api/git";
 import useAxios from "../../Hook/useAxios";
+import Loading from "../Common/Loading";
 import IssueListItem from "./IssueListItem";
 
 const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
@@ -38,13 +39,7 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
 
     return (
         <IssueListComponentBlock>
-            {getIssueResult.isLoading && (
-                <div className="loading">
-                    <div className="loadingContent">
-                        <CircularProgress />
-                    </div>
-                </div>
-            )}
+            {getIssueResult.isLoading && <Loading />}
             <div className="issueList">
                 {getIssueResult.data && getIssueResult.data.length > 0 ? (
                     getIssueResult.data.map((item) => (
@@ -146,28 +141,6 @@ const IssueListComponentBlock = styled.div`
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-    }
-
-    .loading {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .loadingContent {
-        width: 100px;
-        height: 80px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #85858547;
-
-        border-radius: 10%;
     }
 
     .noData {

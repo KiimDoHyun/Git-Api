@@ -9,6 +9,7 @@ import {
     rc_repo_searchRepoList,
     rc_repo_searchRepoList_pageCount,
     re_repo_searchPage,
+    re_repo_searchPageIsLoading,
 } from "../../Store/repo";
 
 const SearchComponent = () => {
@@ -21,6 +22,11 @@ const SearchComponent = () => {
 
     // 리스트 조회 결과 저장
     const setSearchRepoList = useSetRecoilState(rc_repo_searchRepoList);
+
+    // 로딩상태 저장
+    const setSearchPageIsLoading = useSetRecoilState(
+        re_repo_searchPageIsLoading
+    );
 
     // 리스트 조회 결과로 새성되는 Pagination 개수
     const setSearchRepoListPageCount = useSetRecoilState(
@@ -46,6 +52,7 @@ const SearchComponent = () => {
 
     // 검색 결과 처리
     useEffect(() => {
+        setSearchPageIsLoading(getRepoResult.isLoading);
         if (getRepoResult.isLoading) return;
 
         if (getRepoResult.data) {
