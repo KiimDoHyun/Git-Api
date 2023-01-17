@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -8,6 +8,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Card, CardContent, Typography } from "@mui/material";
 import { rc_drag_showDeleteArea, rc_drag_showSaveArea } from "../Store/drag";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useNavigate } from "react-router-dom";
 
 const SideBarComponent = () => {
     // 저장된 repo 리스트
@@ -15,6 +16,17 @@ const SideBarComponent = () => {
 
     const showDeleteArea = useRecoilValue(rc_drag_showDeleteArea);
     const showSaveArea = useRecoilValue(rc_drag_showSaveArea);
+
+    const navigate = useNavigate();
+
+    const onClick = useCallback(
+        (item) => {
+            navigate("/detail", {
+                state: item,
+            });
+        },
+        [navigate]
+    );
 
     return (
         <SideBarComponentBlock>
@@ -52,6 +64,7 @@ const SideBarComponent = () => {
                                             ref={provided.innerRef}
                                             {...provided.dragHandleProps}
                                             {...provided.draggableProps}
+                                            onClick={() => onClick(item)}
                                         >
                                             <CardContent>
                                                 <Typography
