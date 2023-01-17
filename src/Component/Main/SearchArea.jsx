@@ -12,7 +12,7 @@ import {
     re_repo_searchPageIsLoading,
 } from "../../Store/repo";
 
-const SearchComponent = () => {
+const SearchArea = () => {
     // 조회 api
     const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
 
@@ -67,7 +67,7 @@ const SearchComponent = () => {
     }, [getRepoResult]);
 
     return (
-        <SearchComponentBlock>
+        <SearchAreaBlock>
             <form onSubmit={onSubmit}>
                 <InputLabel htmlFor="searchRepo"></InputLabel>
                 <Input
@@ -89,11 +89,11 @@ const SearchComponent = () => {
                 Result:{" "}
                 {getRepoResult.data ? getRepoResult.data.total_count : 0}
             </Typography>
-        </SearchComponentBlock>
+        </SearchAreaBlock>
     );
 };
 
-const SearchComponentBlock = styled.div`
+const SearchAreaBlock = styled.div`
     width: 100%;
     height: 50px;
     display: flex;
@@ -106,4 +106,4 @@ const SearchComponentBlock = styled.div`
         gap: 10px;
     }
 `;
-export default SearchComponent;
+export default SearchArea;

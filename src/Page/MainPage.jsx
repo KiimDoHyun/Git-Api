@@ -1,16 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import SearchComponent from "../Component/Main/SearchComponent";
-import SearchRepoListComponent from "../Component/Main/SearchRepoListComponent";
+import SearchArea from "../Component/Main/SearchArea";
+import SearchRepoList from "../Component/Main/SearchRepoList";
 
 const MainPage = ({ saveTargetRef }) => {
     return (
         <MainPageBlock>
             {/* 검색 영역 */}
-            <SearchComponent />
+            <SearchArea />
 
             {/* Repo 조회 결과 영역 */}
-            <SearchRepoListComponent saveTargetRef={saveTargetRef} />
+            <SearchRepoList saveTargetRef={saveTargetRef} />
         </MainPageBlock>
     );
 };

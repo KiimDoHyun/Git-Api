@@ -2,8 +2,8 @@ import { Divider } from "@mui/material";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import IssueListComponent from "../Component/Detail/IssueListComponent";
-import OwnerInfoComponent from "../Component/Detail/OwnerInfoComponent";
+import IssueList from "../Component/Detail/IssueList";
+import OwnerInfo from "../Component/Detail/OwnerInfo";
 
 const DetailPage = () => {
     const location = useLocation();
@@ -18,15 +18,11 @@ const DetailPage = () => {
 
     return (
         <DetailPageBlock>
-            <OwnerInfoComponent
-                imgSrc={avatar_url}
-                ownerName={login}
-                url={html_url}
-            />
+            <OwnerInfo imgSrc={avatar_url} ownerName={login} url={html_url} />
 
             <Divider orientation="vertical" />
 
-            <IssueListComponent
+            <IssueList
                 ownerName={login}
                 repoName={name}
                 open_issues_count={open_issues_count}

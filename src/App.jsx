@@ -1,7 +1,7 @@
 import "./App.css";
 import SetRepoList from "./Setting/SetRepoList";
 import Router from "./Router/Router";
-import SideBarComponent from "./Component/SideBarComponent";
+import SideBar from "./Component/SideBar";
 import { DragDropContext } from "react-beautiful-dnd";
 import useOnDrag from "./Hook/useOnDrag";
 function App() {
@@ -14,7 +14,7 @@ function App() {
 
             <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 {/* Side */}
-                <SideBarComponent />
+                <SideBar />
 
                 {/* Main */}
                 <Router saveTargetRef={saveTargetRef} />

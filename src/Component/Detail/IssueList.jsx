@@ -11,7 +11,7 @@ import useAxios from "../../Hook/useAxios";
 import Loading from "../Common/Loading";
 import IssueListItem from "./IssueListItem";
 
-const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
+const IssueList = ({ ownerName, repoName, open_issues_count }) => {
     const [getIssueResult, getIssue] = useAxios(getIssueApi);
 
     // 검색 Page
@@ -38,7 +38,7 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
     }, [ownerName, repoName]);
 
     return (
-        <IssueListComponentBlock>
+        <IssueListBlock>
             {getIssueResult.isLoading && <Loading />}
             <div className="issueList">
                 {getIssueResult.data && getIssueResult.data.length > 0 ? (
@@ -72,11 +72,11 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
                     onChange={onChangeSearchPage}
                 />
             </div>
-        </IssueListComponentBlock>
+        </IssueListBlock>
     );
 };
 
-const IssueListComponentBlock = styled.div`
+const IssueListBlock = styled.div`
     height: 100%;
 
     padding: 10px;
@@ -151,4 +151,4 @@ const IssueListComponentBlock = styled.div`
         justify-content: center;
     }
 `;
-export default IssueListComponent;
+export default IssueList;

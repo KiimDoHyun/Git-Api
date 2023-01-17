@@ -2,9 +2,9 @@ import { Link, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
-const OwnerInfoComponent = ({ imgSrc, ownerName, url }) => {
+const OwnerInfo = ({ imgSrc, ownerName, url }) => {
     return (
-        <OwnerInfoComponentBlock>
+        <OwnerInfoBlock>
             <div className="imageCover">
                 <img src={imgSrc} alt="userImage" />
             </div>
@@ -20,11 +20,11 @@ const OwnerInfoComponent = ({ imgSrc, ownerName, url }) => {
                     Visit Repository
                 </Link>
             </Tooltip>
-        </OwnerInfoComponentBlock>
+        </OwnerInfoBlock>
     );
 };
 
-const OwnerInfoComponentBlock = styled.div`
+const OwnerInfoBlock = styled.div`
     height: 100%;
 
     padding: 10px;
@@ -49,4 +49,4 @@ const OwnerInfoComponentBlock = styled.div`
         border: 1px solid rgba(27, 31, 36, 0.15);
     }
 `;
-export default OwnerInfoComponent;
+export default OwnerInfo;

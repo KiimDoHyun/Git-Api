@@ -19,7 +19,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HomeIcon from "@mui/icons-material/Home";
 import CommonListItem from "./Common/CommonListItem";
-const SideBarComponent = () => {
+const SideBar = () => {
     const location = useLocation();
 
     // 저장된 repo 리스트
@@ -44,7 +44,7 @@ const SideBarComponent = () => {
     }, []);
 
     return (
-        <SideBarComponentBlock>
+        <SideBarBlock>
             <div className="headerArea">
                 <h2>My Repo List</h2>
                 <Tooltip title="설정화면을 활성화 합니다.">
@@ -119,11 +119,11 @@ const SideBarComponent = () => {
                     )}
                 </Droppable>
             </div>
-        </SideBarComponentBlock>
+        </SideBarBlock>
     );
 };
 
-const SideBarComponentBlock = styled.div`
+const SideBarBlock = styled.div`
     padding: 10px;
     box-sizing: border-box;
 
@@ -224,4 +224,4 @@ const SideBarComponentBlock = styled.div`
         fill: white;
     }
 `;
-export default SideBarComponent;
+export default SideBar;

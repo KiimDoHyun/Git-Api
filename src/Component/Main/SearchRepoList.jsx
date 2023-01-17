@@ -14,7 +14,7 @@ import {
 import CommonListItem from "../Common/CommonListItem";
 import Loading from "../Common/Loading";
 
-const SearchRepoListComponent = ({ saveTargetRef }) => {
+const SearchRepoList = ({ saveTargetRef }) => {
     // 검색 Page
     const [searchPage, setSearchPage] = useRecoilState(re_repo_searchPage);
 
@@ -51,7 +51,7 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
         <>
             <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
                 {(provided) => (
-                    <SearchRepoListComponentBlock
+                    <SearchRepoListBlock
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
@@ -85,7 +85,7 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
                             }
                         })}
                         {provided.placeholder}
-                    </SearchRepoListComponentBlock>
+                    </SearchRepoListBlock>
                 )}
             </Droppable>
             <div className="pagerArea">
@@ -99,7 +99,7 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
     );
 };
 
-const SearchRepoListComponentBlock = styled.div`
+const SearchRepoListBlock = styled.div`
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
@@ -116,4 +116,4 @@ const SearchRepoListComponentBlock = styled.div`
     align-content: baseline;
     justify-items: center;
 `;
-export default SearchRepoListComponent;
+export default SearchRepoList;
