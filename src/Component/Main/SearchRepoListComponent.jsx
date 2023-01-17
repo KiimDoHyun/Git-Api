@@ -11,6 +11,7 @@ import {
     rc_repo_searchRepoList_pageCount,
     re_repo_searchPage,
 } from "../../Store/repo";
+import CommonListItem from "../Common/CommonListItem";
 
 const SearchRepoListComponent = ({ saveTargetRef }) => {
     // 검색 Page
@@ -66,35 +67,13 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
                                         index={idx}
                                     >
                                         {(provided, snapshotDG) => (
-                                            <Card
-                                                className={
-                                                    snapshotDG.isDragging
-                                                        ? "repoItem draggingRepoItem"
-                                                        : "repoItem"
-                                                }
-                                                ref={provided.innerRef}
-                                                {...provided.dragHandleProps}
-                                                {...provided.draggableProps}
-                                                onMouseDown={() =>
-                                                    onMouseDown(item)
-                                                }
-                                            >
-                                                <CardContent>
-                                                    <Typography
-                                                        gutterBottom
-                                                        variant="h5"
-                                                        component="div"
-                                                    >
-                                                        {item.name}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
-                                                    >
-                                                        {item.owner.login}
-                                                    </Typography>
-                                                </CardContent>
-                                            </Card>
+                                            <CommonListItem
+                                                provided={provided}
+                                                snapshot={snapshotDG}
+                                                onMouseDown={onMouseDown(item)}
+                                                title={item.name}
+                                                content={item.owner.login}
+                                            />
                                         )}
                                     </Draggable>
                                 );

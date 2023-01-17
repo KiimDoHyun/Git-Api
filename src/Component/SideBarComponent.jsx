@@ -18,6 +18,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useLocation, useNavigate } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HomeIcon from "@mui/icons-material/Home";
+import CommonListItem from "./Common/CommonListItem";
 const SideBarComponent = () => {
     const location = useLocation();
 
@@ -85,33 +86,13 @@ const SideBarComponent = () => {
                                     index={idx}
                                 >
                                     {(provided, snapshotDG) => (
-                                        <Card
-                                            className={
-                                                snapshotDG.isDragging
-                                                    ? "repoItem draggingRepoItem"
-                                                    : "repoItem"
-                                            }
-                                            ref={provided.innerRef}
-                                            {...provided.dragHandleProps}
-                                            {...provided.draggableProps}
+                                        <CommonListItem
+                                            provided={provided}
+                                            snapshot={snapshotDG}
                                             onClick={() => onClick(item)}
-                                        >
-                                            <CardContent>
-                                                <Typography
-                                                    gutterBottom
-                                                    variant="h5"
-                                                    component="div"
-                                                >
-                                                    {item.name}
-                                                </Typography>
-                                                <Typography
-                                                    variant="body2"
-                                                    color="text.secondary"
-                                                >
-                                                    {item.owner.login}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
+                                            title={item.name}
+                                            content={item.owner.login}
+                                        />
                                     )}
                                 </Draggable>
                             ))}
