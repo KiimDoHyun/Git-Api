@@ -1,9 +1,11 @@
 import {
     Card,
     CardContent,
+    Chip,
     Divider,
     Link,
     Pagination,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import React, {
@@ -39,14 +41,12 @@ const DetailPage = () => {
         },
         [location]
     );
-    /*
-    필수
-    선택된 Repo의 issue가 보여야 한다.
 
-    각 issue는 제목, repo 명이 필수로 보여져야 한다
+    // Issue 클릭
+    const onClick = useCallback(({ html_url }) => {
+        window.open(html_url, "_blank");
+    }, []);
 
-    issue의 내용이 길 수 있으니 높이는 가변으로 한다.
-    */
     useEffect(() => {
         const { state } = location;
         const user = state.owner.login;
@@ -55,8 +55,6 @@ const DetailPage = () => {
         getIssue({ user, repo, page: 1 });
         setSearchPage(1);
     }, [location]);
-
-    console.log("getIssueResult: ", getIssueResult);
 
     return (
         <DetailPageBlock>
@@ -75,48 +73,83 @@ const DetailPage = () => {
                 </Typography>
 
                 {/* 저장소 주인 링크 */}
-                <Link
-                    target={"_blank"}
-                    href={location.state.owner.html_url}
-                    underline="none"
-                >
-                    Visit Repository
-                </Link>
+                <Tooltip title="클릭하면 해당 저장소로 이동합니다.">
+                    <Link
+                        target={"_blank"}
+                        href={location.state.owner.html_url}
+                        underline="none"
+                    >
+                        Visit Repository
+                    </Link>
+                </Tooltip>
             </div>
             <Divider orientation="vertical" />
             <div className="issue">
                 <div className="issueList">
                     {getIssueResult.data?.map((item) => (
-                        <Card className="repoItem" key={item.id}>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    variant="h4"
-                                    component="div"
-                                >
-                                    {location.state.name}
-                                </Typography>
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="div"
-                                >
-                                    {item.title}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                >
-                                    {item.user.login}
-                                </Typography>
-                            </CardContent>
-                        </Card>
+                        <Tooltip
+                            key={item.id}
+                            title="클릭하면 해당 Issue 페이지로 이동합니다."
+                        >
+                            <Card
+                                className="repoItem"
+                                onClick={() => onClick(item)}
+                            >
+                                <CardContent>
+                                    {/* Repo 명 */}
+                                    <Typography
+                                        gutterBottom
+                                        variant="h4"
+                                        component="div"
+                                    >
+                                        {location.state.name}
+                                    </Typography>
+
+                                    {/* 이슈 제목 */}
+                                    <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                    >
+                                        {item.title}
+                                    </Typography>
+
+                                    {/* 이슈 라벨 */}
+                                    <div className="issueLabel">
+                                        {item.labels.map((item, idx) => (
+                                            <Chip
+                                                key={idx}
+                                                label={item.name}
+                                                style={{
+                                                    backgroundColor: `#${item.color}`,
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                    {/* <Card */}
+
+                                    {/* 이슈 생성자 */}
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        component="div"
+                                        className="issueWriter"
+                                    >
+                                        <img
+                                            src={item.user.avatar_url}
+                                            alt="issueWriter"
+                                        />
+                                        {item.user.login}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Tooltip>
                     ))}
                 </div>
                 <div className="pagerArea">
                     <Pagination
                         page={searchPage}
-                        count={40}
+                        count={Math.ceil(location.state.open_issues_count / 30)}
                         onChange={onChangeSearchPage}
                     />
                 </div>
@@ -196,6 +229,35 @@ const DetailPageBlock = styled.div`
         height: auto;
 
         margin-bottom: 10px;
+        cursor: pointer;
+
+        box-sizing: border-box;
+        border: 2px solid #fff0;
+
+        transition: 0.2s;
+    }
+
+    .repoItem:hover {
+        border: 2px solid darkseagreen;
+    }
+
+    .issueWriter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .issueWriter img {
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+    }
+
+    .issueLabel {
+        margin: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 `;
 export default DetailPage;
