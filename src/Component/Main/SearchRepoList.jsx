@@ -1,4 +1,4 @@
-import { Pagination } from "@mui/material";
+import { Pagination, Typography } from "@mui/material";
 import React, { useCallback, useEffect } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -13,6 +13,7 @@ import {
 } from "../../Store/repo";
 import CommonListItem from "../Common/CommonListItem";
 import Loading from "../Common/Loading";
+import NoData from "../Common/NoData";
 
 const SearchRepoList = ({ saveTargetRef }) => {
     // 검색 Page
@@ -48,44 +49,54 @@ const SearchRepoList = ({ saveTargetRef }) => {
     }, [savedRepoList]);
 
     return (
-        <>
+        <SearchRepoListBlock
+            isNoData={searchRepoList.length > 0 ? false : true}
+        >
+            {/* <Loading /> */}
+            {searchPageIsLoading && <Loading />}
             <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
                 {(provided) => (
-                    <SearchRepoListBlock
+                    <div
+                        className="listArea"
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
-                        {searchPageIsLoading && <Loading />}
-                        {searchRepoList.map((item, idx) => {
-                            // 현재 조회된 아이템이 이미 저장된 리스트에 존재한다면 표시하지 않는다.
-                            const isDup = savedRepoList.find(
-                                (findItem) => findItem.id === item.id
-                            );
-
-                            if (isDup) {
-                                return null;
-                            } else {
-                                return (
-                                    <Draggable
-                                        key={item.id}
-                                        draggableId={String(item.id)}
-                                        index={idx}
-                                    >
-                                        {(provided, snapshotDG) => (
-                                            <CommonListItem
-                                                provided={provided}
-                                                snapshot={snapshotDG}
-                                                onMouseDown={onMouseDown(item)}
-                                                title={item.name}
-                                                content={item.owner.login}
-                                            />
-                                        )}
-                                    </Draggable>
+                        {searchRepoList.length > 0 ? (
+                            searchRepoList.map((item, idx) => {
+                                // 현재 조회된 아이템이 이미 저장된 리스트에 존재한다면 표시하지 않는다.
+                                const isDup = savedRepoList.find(
+                                    (findItem) => findItem.id === item.id
                                 );
-                            }
-                        })}
+
+                                if (isDup) {
+                                    return null;
+                                } else {
+                                    return (
+                                        <Draggable
+                                            key={item.id}
+                                            draggableId={String(item.id)}
+                                            index={idx}
+                                        >
+                                            {(provided, snapshotDG) => (
+                                                <CommonListItem
+                                                    provided={provided}
+                                                    snapshot={snapshotDG}
+                                                    onMouseDown={onMouseDown(
+                                                        item
+                                                    )}
+                                                    title={item.name}
+                                                    content={item.owner.login}
+                                                />
+                                            )}
+                                        </Draggable>
+                                    );
+                                }
+                            })
+                        ) : (
+                            <NoData text={"No Results"} />
+                        )}
                         {provided.placeholder}
-                    </SearchRepoListBlock>
+                    </div>
                 )}
             </Droppable>
             <div className="pagerArea">
@@ -95,26 +106,36 @@ const SearchRepoList = ({ saveTargetRef }) => {
                     onChange={onChangeSearchPage}
                 />
             </div>
-        </>
+        </SearchRepoListBlock>
     );
 };
 
 const SearchRepoListBlock = styled.div`
+    height: 100%;
     display: grid;
+    grid-template-rows: 1fr 50px;
     gap: 10px;
-    grid-template-columns: 1fr 1fr 1fr;
-    overflow: scroll;
-
     position: relative;
 
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    overflow: hidden;
 
-    padding: 10px;
-    box-sizing: border-box;
+    .listArea {
+        ${(props) =>
+            props.isNoData
+                ? ""
+                : "display: grid; gap: 10px; grid-template-columns: 1fr 1fr 1fr;"}
 
-    align-content: baseline;
-    justify-items: unset;
-    row-gap: 20px;
+        overflow: scroll;
+
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+        padding: 10px;
+        box-sizing: border-box;
+
+        align-content: baseline;
+        justify-items: unset;
+        row-gap: 20px;
+    }
 `;
 export default SearchRepoList;

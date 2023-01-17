@@ -74,6 +74,7 @@ const SearchArea = () => {
                     placeholder="Repo Name"
                     name="searchRepo"
                     type="text"
+                    required={true}
                 />
                 <IconButton type="submit">
                     <SearchIcon />

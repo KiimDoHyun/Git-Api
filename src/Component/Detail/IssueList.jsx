@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { getIssueApi } from "../../Api/git";
 import useAxios from "../../Hook/useAxios";
 import Loading from "../Common/Loading";
+import NoData from "../Common/NoData";
 import IssueListItem from "./IssueListItem";
 
 const IssueList = ({ ownerName, repoName, open_issues_count }) => {
@@ -55,14 +56,15 @@ const IssueList = ({ ownerName, repoName, open_issues_count }) => {
                         />
                     ))
                 ) : (
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        component="div"
-                        className="noData"
-                    >
-                        No Issues
-                    </Typography>
+                    <NoData text={"No Issues"} />
+                    // <Typography
+                    //     variant="body2"
+                    //     color="text.secondary"
+                    //     component="div"
+                    //     className="noData"
+                    // >
+
+                    // </Typography>
                 )}
             </div>
             <div className="pagerArea">
@@ -144,11 +146,6 @@ const IssueListBlock = styled.div`
     }
 
     .noData {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 `;
 export default IssueList;
