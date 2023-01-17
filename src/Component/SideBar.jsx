@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { ID_DELETE_AREA, ID_SAVED_AREA } from "../Common/common";
 import { rc_repo_savedRepoList } from "../Store/repo";
@@ -19,11 +19,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HomeIcon from "@mui/icons-material/Home";
 import CommonListItem from "./Common/CommonListItem";
+import { rc_user_showSetUserModal, rc_user_user } from "../Store/user";
 const SideBar = () => {
     const location = useLocation();
 
     // 저장된 repo 리스트
     const savedRepoList = useRecoilValue(rc_repo_savedRepoList);
+
+    // 사용자
+    const currentUser = useRecoilValue(rc_user_user);
+
+    // 사용자 Dialog 활성화 여부
+    const setShowSetUserModal = useSetRecoilState(rc_user_showSetUserModal);
 
     const showDeleteArea = useRecoilValue(rc_drag_showDeleteArea);
     const showSaveArea = useRecoilValue(rc_drag_showSaveArea);
@@ -39,6 +46,10 @@ const SideBar = () => {
         [navigate]
     );
 
+    const onClickSetting = useCallback(() => {
+        setShowSetUserModal(true);
+    }, []);
+
     const onClickHome = useCallback(() => {
         navigate("/");
     }, []);
@@ -46,23 +57,32 @@ const SideBar = () => {
     return (
         <SideBarBlock>
             <div className="headerArea">
-                <h2>My Repo List</h2>
-                <Tooltip title="설정화면을 활성화 합니다.">
-                    <IconButton>
-                        <SettingsIcon />
-                    </IconButton>
-                </Tooltip>
-
-                {location.pathname !== "/" && (
-                    <Tooltip
-                        title="메인 화면으로 이동합니다."
-                        className="homeIcon"
-                    >
-                        <IconButton onClick={onClickHome}>
-                            <HomeIcon color="primary" />
+                <div className="titleArea">
+                    <h2>My Repo List</h2>
+                    <Tooltip title="사용자 설정창을 활성화 합니다.">
+                        <IconButton onClick={onClickSetting}>
+                            <SettingsIcon />
                         </IconButton>
                     </Tooltip>
-                )}
+
+                    {location.pathname !== "/" && (
+                        <Tooltip
+                            title="메인 화면으로 이동합니다."
+                            className="homeIcon"
+                        >
+                            <IconButton onClick={onClickHome}>
+                                <HomeIcon color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </div>
+                <div className="subArea">
+                    <Tooltip title="현재 사용자 입니다.">
+                        <Typography variant="body1" color="text.secondary">
+                            {currentUser}
+                        </Typography>
+                    </Tooltip>
+                </div>
             </div>
             <div className="contentsArea">
                 <Droppable droppableId={ID_SAVED_AREA}>
@@ -138,11 +158,19 @@ const SideBarBlock = styled.div`
 
     .headerArea {
         padding: 0 15px;
+    }
+
+    .headerArea .titleArea {
         flex: 1;
 
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+
+    .subArea {
+        display: flex;
+        align-items: center;
     }
 
     .homeIcon {

@@ -11,6 +11,7 @@ import {
     re_repo_searchPage,
     re_repo_searchPageIsLoading,
 } from "../../Store/repo";
+import { rc_user_user } from "../../Store/user";
 import CommonListItem from "../Common/CommonListItem";
 import Loading from "../Common/Loading";
 import NoData from "../Common/NoData";
@@ -43,10 +44,15 @@ const SearchRepoList = ({ saveTargetRef }) => {
         setSearchPage(value);
     }, []);
 
+    // 현재 사용자
+    const currentUser = useRecoilValue(rc_user_user);
+
     useEffect(() => {
+        if (!currentUser) return;
+
         const data = JSON.stringify(savedRepoList);
-        window.localStorage.setItem("repoList", data);
-    }, [savedRepoList]);
+        window.localStorage.setItem(`${currentUser}_repoList`, data);
+    }, [currentUser, savedRepoList]);
 
     return (
         <SearchRepoListBlock
