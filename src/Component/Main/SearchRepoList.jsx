@@ -114,6 +114,7 @@ const SearchRepoListBlock = styled.div`
     box-sizing: border-box;
 
     align-content: baseline;
-    justify-items: center;
+    justify-items: unset;
+    row-gap: 20px;
 `;
 export default SearchRepoList;
