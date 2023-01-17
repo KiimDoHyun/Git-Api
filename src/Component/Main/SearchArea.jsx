@@ -1,4 +1,4 @@
-import { Button, Input, InputLabel, Typography } from "@mui/material";
+import { Button, IconButton, Input, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
@@ -69,21 +69,15 @@ const SearchArea = () => {
     return (
         <SearchAreaBlock>
             <form onSubmit={onSubmit}>
-                <InputLabel htmlFor="searchRepo"></InputLabel>
                 <Input
                     id="searchRepo"
                     placeholder="Repo Name"
                     name="searchRepo"
                     type="text"
                 />
-                <Button
-                    variant="text"
-                    type="submit"
-                    size="small"
-                    color="inherit"
-                >
+                <IconButton>
                     <SearchIcon />
-                </Button>
+                </IconButton>
             </form>
             <Typography variant="body2" color="text.secondary">
                 Result:{" "}
@@ -104,6 +98,7 @@ const SearchAreaBlock = styled.div`
         justify-content: flex-start;
         align-items: center;
         gap: 10px;
+        margin-right: 10px;
     }
 `;
 export default SearchArea;
