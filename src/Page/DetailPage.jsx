@@ -116,15 +116,22 @@ const DetailPage = () => {
 
                                     {/* 이슈 라벨 */}
                                     <div className="issueLabel">
-                                        {item.labels.map((item, idx) => (
-                                            <Chip
-                                                key={idx}
-                                                label={item.name}
-                                                style={{
-                                                    backgroundColor: `#${item.color}`,
-                                                }}
-                                            />
-                                        ))}
+                                        {item.labels.map((item, idx) => {
+                                            const color =
+                                                item.color === "000000"
+                                                    ? "white"
+                                                    : "black";
+                                            return (
+                                                <Chip
+                                                    key={idx}
+                                                    label={item.name}
+                                                    style={{
+                                                        backgroundColor: `#${item.color}`,
+                                                        color,
+                                                    }}
+                                                />
+                                            );
+                                        })}
                                     </div>
                                     {/* <Card */}
 
