@@ -31,7 +31,6 @@ const DetailPage = () => {
                 repoName={name}
                 open_issues_count={open_issues_count}
             />
-            <div className="issue"></div>
         </DetailPageBlock>
     );
 };

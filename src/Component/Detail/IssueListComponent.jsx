@@ -1,15 +1,9 @@
-import {
-    Card,
-    CardContent,
-    Chip,
-    Pagination,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Pagination } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { getIssueApi } from "../../Api/git";
 import useAxios from "../../Hook/useAxios";
+import IssueListItem from "./IssueListItem";
 
 const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
     const [getIssueResult, getIssue] = useAxios(getIssueApi);
@@ -28,7 +22,7 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
     );
 
     // Issue 클릭
-    const onClick = useCallback(({ html_url }) => {
+    const onClick = useCallback((html_url) => {
         window.open(html_url, "_blank");
     }, []);
 
@@ -41,70 +35,16 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
         <IssueListComponentBlock>
             <div className="issueList">
                 {getIssueResult.data?.map((item) => (
-                    <Tooltip
+                    <IssueListItem
                         key={item.id}
-                        title="클릭하면 해당 Issue 페이지로 이동합니다."
-                    >
-                        <Card
-                            className="repoItem"
-                            onClick={() => onClick(item)}
-                        >
-                            <CardContent>
-                                {/* Repo 명 */}
-                                <Typography
-                                    gutterBottom
-                                    variant="h4"
-                                    component="div"
-                                >
-                                    {repoName}
-                                </Typography>
-
-                                {/* 이슈 제목 */}
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="div"
-                                >
-                                    {item.title}
-                                </Typography>
-
-                                {/* 이슈 라벨 */}
-                                <div className="issueLabel">
-                                    {item.labels.map((item, idx) => {
-                                        const color =
-                                            item.color === "000000"
-                                                ? "white"
-                                                : "black";
-                                        return (
-                                            <Chip
-                                                key={idx}
-                                                label={item.name}
-                                                style={{
-                                                    backgroundColor: `#${item.color}`,
-                                                    color,
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                                {/* <Card */}
-
-                                {/* 이슈 생성자 */}
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    component="div"
-                                    className="issueWriter"
-                                >
-                                    <img
-                                        src={item.user.avatar_url}
-                                        alt="issueWriter"
-                                    />
-                                    {item.user.login}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Tooltip>
+                        title={"클릭하면 해당 Issue 페이지로 이동합니다."}
+                        onClick={() => onClick(item.html_url)}
+                        repoName={repoName}
+                        issueTitle={item.title}
+                        labels={item.labels}
+                        userImage={item.user.avatar_url}
+                        userName={item.user.login}
+                    />
                 ))}
             </div>
             <div className="pagerArea">
