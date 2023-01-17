@@ -4,7 +4,7 @@ import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import useAxios from "../../Hook/useAxios";
 import { getRepoApi } from "../../Api/git";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
     rc_repo_searchRepoList,
     rc_repo_searchRepoList_pageCount,

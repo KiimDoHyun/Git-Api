@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -13,11 +13,6 @@ const SideBarComponent = () => {
     // 저장된 repo 리스트
     const savedRepoList = useRecoilValue(rc_repo_savedRepoList);
 
-    // 조회된 타겟 리스트
-    useEffect(() => {
-        console.log("여기는 사이드");
-    });
-
     const showDeleteArea = useRecoilValue(rc_drag_showDeleteArea);
     const showSaveArea = useRecoilValue(rc_drag_showSaveArea);
 
@@ -28,7 +23,7 @@ const SideBarComponent = () => {
             </div>
             <div className="contentsArea">
                 <Droppable droppableId={ID_SAVED_AREA}>
-                    {(provided, snapshot) => (
+                    {(provided) => (
                         <div
                             className={
                                 showSaveArea
