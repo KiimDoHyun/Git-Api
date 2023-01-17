@@ -47,9 +47,13 @@ const SideBarComponent = () => {
                                     draggableId={String(item.id)}
                                     index={idx}
                                 >
-                                    {(provided) => (
+                                    {(provided, snapshotDG) => (
                                         <Card
-                                            className="repoItem"
+                                            className={
+                                                snapshotDG.isDragging
+                                                    ? "repoItem draggingRepoItem"
+                                                    : "repoItem"
+                                            }
                                             ref={provided.innerRef}
                                             {...provided.dragHandleProps}
                                             {...provided.draggableProps}

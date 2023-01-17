@@ -14,6 +14,10 @@
     text-align: left;
 }
 
+.draggingRepoItem {
+    border: 2px solid darkseagreen;
+}
+
 .css-q0jhri-MuiInputBase-root-MuiInput-root:after {
     border-bottom: 2px solid black;
 }

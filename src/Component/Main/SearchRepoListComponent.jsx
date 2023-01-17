@@ -45,7 +45,7 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
     return (
         <>
             <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
-                {(provided, snapshot) => (
+                {(provided) => (
                     <SearchRepoListComponentBlock
                         ref={provided.innerRef}
                         {...provided.droppableProps}
@@ -65,9 +65,13 @@ const SearchRepoListComponent = ({ saveTargetRef }) => {
                                         draggableId={String(item.id)}
                                         index={idx}
                                     >
-                                        {(provided) => (
+                                        {(provided, snapshotDG) => (
                                             <Card
-                                                className="repoItem"
+                                                className={
+                                                    snapshotDG.isDragging
+                                                        ? "repoItem draggingRepoItem"
+                                                        : "repoItem"
+                                                }
                                                 ref={provided.innerRef}
                                                 {...provided.dragHandleProps}
                                                 {...provided.draggableProps}
@@ -122,5 +126,8 @@ const SearchRepoListComponentBlock = styled.div`
 
     padding: 10px;
     box-sizing: border-box;
+
+    align-content: baseline;
+    justify-items: center;
 `;
 export default SearchRepoListComponent;
