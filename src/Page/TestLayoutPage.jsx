@@ -8,14 +8,26 @@ import {
     Paper,
     Tooltip,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 const TestLayoutPage = () => {
+    const [list, setList] = useState([1, 2, 3]);
+    const listRef = useRef([]);
+
+    useEffect(() => {
+        listRef.current = list;
+    }, [list]);
+
+    const check = useCallback(() => {
+        console.log("listRef: ", listRef);
+    }, []);
     return (
         <TestLayoutPageBlock>
             <div className="savedList">
+                <button onClick={() => setList(list.concat(99))}>ADD</button>
+                <button onClick={check}>Check</button>
                 <h2>Saved Repo List</h2>
                 <div>
                     <List>

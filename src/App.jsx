@@ -4,8 +4,14 @@ import Router from "./Router/Router";
 import SideBarComponent from "./Component/SideBarComponent";
 import { DragDropContext } from "react-beautiful-dnd";
 import useOnDrag from "./Hook/useOnDrag";
+import { useEffect } from "react";
 function App() {
-    const [onDragStart, onDragEnd] = useOnDrag();
+    const [saveTargetRef, onDragStart, onDragEnd] = useOnDrag();
+
+    useEffect(() => {
+        console.log(">> 리렌더링");
+    });
+
     return (
         <div className="App">
             {/* Setting */}
@@ -16,7 +22,7 @@ function App() {
                 <SideBarComponent />
 
                 {/* Main */}
-                <Router />
+                <Router saveTargetRef={saveTargetRef} />
             </DragDropContext>
         </div>
     );

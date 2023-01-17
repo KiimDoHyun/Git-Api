@@ -4,10 +4,13 @@ import MainPage from "../Page/MainPage";
 import TestDnDPage from "../Page/TestDnDPage";
 import TestLayoutPage from "../Page/TestLayoutPage";
 
-const Router = () => {
+const Router = ({ saveTargetRef }) => {
     return (
         <Routes>
-            <Route element={<MainPage />} path="/" />
+            <Route
+                element={<MainPage saveTargetRef={saveTargetRef} />}
+                path="/"
+            />
             <Route element={<DetailPage />} path="/detail" />
             <Route element={<TestDnDPage />} path="/testdndpage" />
             <Route element={<TestLayoutPage />} path="/testLayout" />

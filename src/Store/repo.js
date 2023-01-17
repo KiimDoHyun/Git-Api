@@ -5,6 +5,11 @@ export const rc_repo_savedRepoList = atom({
     default: [],
 });
 
+export const rc_repo_savedRepoTarget = atom({
+    key: "rc_repo_savedRepoTarget",
+    default: null,
+});
+
 export const rc_repo_searchRepoList = atom({
     key: "rc_repo_searchRepoList",
     default: [],
