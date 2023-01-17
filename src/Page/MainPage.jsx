@@ -22,139 +22,104 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getIssueApi, getRepoApi } from "../Api/git";
 import useAxios from "../Hook/useAxios";
-import { rc_repo_repoList } from "../Store/repo";
+import {
+    rc_repo_savedRepoList,
+    rc_repo_searchRepoList,
+    rc_repo_searchRepoList_pageCount,
+    re_repo_searchPage,
+} from "../Store/repo";
 import SearchIcon from "@mui/icons-material/Search";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useSnackbar } from "notistack";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SaveIcon from "@mui/icons-material/Save";
+import SearchComponent from "../Component/Main/SearchComponent";
 
 const ID_SAVED_AREA = "SAVED_AREA";
 const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
 const ID_DELETE_AREA = "DELETE_AREA";
 
 const MainPage = () => {
-    const [getRepoResult, getSearchRepo] = useAxios(getRepoApi);
-    const [getIssueResult, getIssueRepo] = useAxios(getIssueApi);
-
-    // 검색 결과
-    const [repoSearchResult, setRepoSearchResult] = useState([]);
-
-    const [currentDetailRepo, setCurrentDetailRepo] = useState(null);
-
-    const [selectedRepoName, setSelectedRepoName] = useState("");
-    const [selectedRepoURL, setSelectedRepoURL] = useState("");
-    const [searchValue, setSearchValue] = useState("");
-    const [searchPage, setSearchPage] = useState(1);
-
-    const [searchIssuePage, setSearchIssuePage] = useState(1);
-    const [searchIssueUser, setSearchIssueUser] = useState("");
-    const [searchIssueRepo, setSearchIssueRepo] = useState("");
-
-    const [openDialog, setOpenDialog] = useState(false);
+    const [searchPage, setSearchPage] = useRecoilState(re_repo_searchPage);
 
     // 저장된 repo 리스트
-    const [repoList, setRepoList] = useRecoilState(rc_repo_repoList);
+    const [savedRepoList, setSavedRepoList] = useRecoilState(
+        rc_repo_savedRepoList
+    );
+
+    // 조회 결과 리스트
+    const searchRepoList = useRecoilValue(rc_repo_searchRepoList);
+
+    // 리스트 조회 결과로 새성되는 Pagination 개수
+    const searchRepoListPageCount = useRecoilValue(
+        rc_repo_searchRepoList_pageCount
+    );
 
     // Repo 조회 page
     const onChangeSearchPage = useCallback((_, value) => {
         setSearchPage(value);
     }, []);
 
-    // Repo 조회 page
-    const onChangeIssuePage = useCallback((_, value) => {
-        setSearchIssuePage(value);
-    }, []);
-
-    const onSubmit = useCallback((e) => {
-        e.preventDefault();
-
-        // 입력값
-        const inputValue = e.target[0].value;
-        setSearchValue(inputValue);
-        setSearchPage(1);
-        // 조회
-        // 조회하면 1페이지로 시작한다.
-        // getSearchRepo({ searchParams: inputValue, page: searchPage });
-    }, []);
-
-    const onClickAdd = useCallback(
-        (item) => {
-            if (repoList.length === 4) {
-                alert("더이상 추가할 수 없습니다.");
-                return;
-            }
-
-            if (window.confirm("추가하시겠습니까?")) {
-                setRepoList((prev) => [...prev, item]);
-            }
-        },
-        [repoList, setRepoList]
-    );
-
-    const onClickDelete = useCallback((item) => {
-        if (window.confirm("제거하시겠습니까?")) {
-            setRepoList((prev) =>
-                prev.filter((filterItem) => filterItem.id !== item.id)
-            );
-        }
-    }, []);
+    // 이슈 조회 page
+    // const onChangeIssuePage = useCallback((_, value) => {
+    //     setSearchIssuePage(value);
+    // }, []);
 
     // 저장된 리스트 클릭
     /*
     클릭했을때 이슈를 조회하는것으로 우선 구현함
     */
-    const onClickDetail = useCallback((item) => {
-        console.log("item: ", item);
-        const user = item.owner.login;
-        const repo = item.name;
-        setCurrentDetailRepo(item);
+    // const onClickDetail = useCallback((item) => {
+    //     console.log("item: ", item);
+    //     const user = item.owner.login;
+    //     const repo = item.name;
+    //     setCurrentDetailRepo(item);
 
-        setSearchIssueUser(user);
-        setSearchIssueRepo(repo);
-        setSelectedRepoName(repo);
-        setSearchIssuePage(1);
+    //     setSearchIssueUser(user);
+    //     setSearchIssueRepo(repo);
+    //     setSelectedRepoName(repo);
+    //     setSearchIssuePage(1);
 
-        setSelectedRepoURL(item.html_url);
+    //     setSelectedRepoURL(item.html_url);
 
-        setOpenDialog(true);
-    }, []);
+    //     setOpenDialog(true);
+    // }, []);
 
-    const onClickIssueList = useCallback(() => {
-        console.log("selectedRepoURL: ", selectedRepoURL);
-        if (window.confirm("해당 저장소로 이동하시겠습니까?")) {
-            window.open(selectedRepoURL);
-        }
-    }, [selectedRepoURL]);
+    // const onClickIssueList = useCallback(() => {
+    //     console.log("selectedRepoURL: ", selectedRepoURL);
+    //     if (window.confirm("해당 저장소로 이동하시겠습니까?")) {
+    //         window.open(selectedRepoURL);
+    //     }
+    // }, [selectedRepoURL]);
 
     // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
     useEffect(() => {
-        const data = JSON.stringify(repoList);
+        const data = JSON.stringify(savedRepoList);
         window.localStorage.setItem("repoList", data);
-    }, [repoList]);
+    }, [savedRepoList]);
 
     // Repo 조회
-    useEffect(() => {
-        if (!searchValue) return;
+    // useEffect(() => {
+    //     if (!searchValue) return;
 
-        // search!
-        getSearchRepo({ searchParams: searchValue, page: searchPage });
-    }, [searchPage, searchValue]);
+    //     // search!
+    //     getSearchRepo({ searchParams: searchValue, page: searchPage });
+    // }, [searchPage, searchValue]);
 
     // Issue 조회
-    useEffect(() => {
-        if (!openDialog || !searchIssueUser || !searchIssueRepo) return;
+    // useEffect(() => {
+    //     if (!openDialog || !searchIssueUser || !searchIssueRepo) return;
 
-        getIssueRepo({
-            user: searchIssueUser,
-            repo: searchIssueRepo,
-            page: searchIssuePage,
-        });
-    }, [openDialog, searchIssuePage, searchIssueUser, searchIssueRepo]);
+    //     getIssueRepo({
+    //         user: searchIssueUser,
+    //         repo: searchIssueRepo,
+    //         page: searchIssuePage,
+    //     });
+    // }, [openDialog, searchIssuePage, searchIssueUser, searchIssueRepo]);
 
     //
     /*
@@ -167,17 +132,11 @@ const MainPage = () => {
     이슈 조회는 현재 Open 상태 이슈만 가져옴 -> 테스트 완료
     open_issues_count
      */
-    const issuePageCount = useMemo(() => {
-        if (!currentDetailRepo) return 0;
+    // const issuePageCount = useMemo(() => {
+    //     if (!currentDetailRepo) return 0;
 
-        return Math.ceil(currentDetailRepo.open_issues_count / 30);
-    }, [currentDetailRepo]);
-
-    const pageCount = useMemo(() => {
-        if (!getRepoResult.data) return 0;
-
-        return Math.ceil(getRepoResult.data.total_count / 30);
-    }, [getRepoResult]);
+    //     return Math.ceil(currentDetailRepo.open_issues_count / 30);
+    // }, [currentDetailRepo]);
 
     // 드래그 관련
     const dragInfo = useRef({ start: null, end: null });
@@ -226,132 +185,133 @@ const MainPage = () => {
         return { type, msg };
     }, []);
 
-    useEffect(() => {
-        if (getRepoResult.data) {
-            // setRepoSearchResult(getRepoResult.data.items);
-            // 조회 영역의 중복 데이터 제거
-            // 드래드그앤 드롭이벤트와 중복해서 발생중임
-            setRepoSearchResult(
-                getRepoResult.data.items.filter(
-                    (filterItem) =>
-                        !repoList.find(
-                            (findItem) => findItem.id === filterItem.id
-                        )
-                )
-            );
-        } else {
-            setRepoSearchResult([]);
-        }
-    }, [repoList, getRepoResult]);
+    // useEffect(() => {
+    //     if (getRepoResult.data) {
+    //         // setRepoSearchResult(getRepoResult.data.items);
+    //         // 조회 영역의 중복 데이터 제거
+    //         // 드래드그앤 드롭이벤트와 중복해서 발생중임
+    //         setRepoSearchResult(
+    //             getRepoResult.data.items.filter(
+    //                 (filterItem) =>
+    //                     !repoList.find(
+    //                         (findItem) => findItem.id === filterItem.id
+    //                     )
+    //             )
+    //         );
+    //     } else {
+    //         setRepoSearchResult([]);
+    //     }
+    // }, [repoList, getRepoResult]);
 
     // 삭제영역
     const [showDeleteArea, setShowDeleteArea] = useState(false);
     const [showSaveArea, setShowSaveArea] = useState(false);
-    const onDragStart = useCallback((e) => {
-        // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
-        dragInfo.current.start = e;
+    // const onDragStart = useCallback((e) => {
+    //     // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
+    //     dragInfo.current.start = e;
 
-        const {
-            source: { droppableId },
-        } = e;
+    //     const {
+    //         source: { droppableId },
+    //     } = e;
 
-        // 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
-        if (droppableId === ID_SAVED_AREA) {
-            setShowDeleteArea(true);
-            console.log("저장영역에서 시작");
-        }
-        // 조회 영역에서 드래그를 하는 경우 저장 영역을 표시해 준다.
-        else {
-            setShowSaveArea(true);
-            console.log("조회영역에서 시작");
-        }
-    }, []);
-    const onDragEnd = useCallback(
-        (e) => {
-            const startID = dragInfo.current.start.source.droppableId;
-            const endID = e.destination.droppableId;
+    //     // 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
+    //     if (droppableId === ID_SAVED_AREA) {
+    //         setShowDeleteArea(true);
+    //         console.log("저장영역에서 시작");
+    //     }
+    //     // 조회 영역에서 드래그를 하는 경우 저장 영역을 표시해 준다.
+    //     else {
+    //         setShowSaveArea(true);
+    //         console.log("조회영역에서 시작");
+    //     }
+    // }, []);
 
-            console.log("getRepoResult: ", getRepoResult);
+    // const onDragEnd = useCallback(
+    //     (e) => {
+    //         const startID = dragInfo.current.start.source.droppableId;
+    //         const endID = e.destination.droppableId;
 
-            // 이동 체크
-            const { type, msg } = checkMovement(startID, endID);
+    //         console.log("getRepoResult: ", getRepoResult);
 
-            switch (type) {
-                case "ERROR":
-                    enqueueSnackbar(msg, { variant: "warning" });
-                    break;
-                case "SAVE":
-                    if (repoList.length === 4) {
-                        enqueueSnackbar("최대 4개까지 저장 가능합니다.", {
-                            variant: "warning",
-                        });
-                        break;
-                    }
-                    const listData = getRepoResult["data"]["items"] || [];
-                    const target = listData.find(
-                        (findItem) => String(findItem.id) === e.draggableId
-                    );
-                    const copySavedData1 = [...repoList];
-                    copySavedData1.splice(e.destination.index, 0, target);
+    //         // 이동 체크
+    //         const { type, msg } = checkMovement(startID, endID);
 
-                    setRepoList(copySavedData1);
+    //         switch (type) {
+    //             case "ERROR":
+    //                 enqueueSnackbar(msg, { variant: "warning" });
+    //                 break;
+    //             case "SAVE":
+    //                 if (repoList.length === 4) {
+    //                     enqueueSnackbar("최대 4개까지 저장 가능합니다.", {
+    //                         variant: "warning",
+    //                     });
+    //                     break;
+    //                 }
+    //                 const listData = getRepoResult["data"]["items"] || [];
+    //                 const target = listData.find(
+    //                     (findItem) => String(findItem.id) === e.draggableId
+    //                 );
+    //                 const copySavedData1 = [...repoList];
+    //                 copySavedData1.splice(e.destination.index, 0, target);
 
-                    setRepoSearchResult((prevSearchData) =>
-                        prevSearchData.filter(
-                            (filterItem) =>
-                                String(filterItem.id) !== e.draggableId
-                        )
-                    );
-                    enqueueSnackbar(msg, { variant: "success" });
-                    break;
+    //                 setRepoList(copySavedData1);
 
-                case "DELETE":
-                    console.log("e: ", e);
-                    console.log("repoList: ", repoList);
-                    setRepoList((prevSavedData) =>
-                        prevSavedData.filter(
-                            (filterItem) =>
-                                String(filterItem.id) !== e.draggableId
-                        )
-                    );
-                    enqueueSnackbar(msg, { variant: "error" });
-                    break;
+    //                 setRepoSearchResult((prevSearchData) =>
+    //                     prevSearchData.filter(
+    //                         (filterItem) =>
+    //                             String(filterItem.id) !== e.draggableId
+    //                     )
+    //                 );
+    //                 enqueueSnackbar(msg, { variant: "success" });
+    //                 break;
 
-                case "REORDER":
-                    if (
-                        dragInfo.current.start.source.index ===
-                        e.destination.index
-                    ) {
-                        break;
-                    }
-                    const copySavedData2 = [...repoList];
-                    const target2 =
-                        copySavedData2[dragInfo.current.start.source.index];
+    //             case "DELETE":
+    //                 console.log("e: ", e);
+    //                 console.log("repoList: ", repoList);
+    //                 setRepoList((prevSavedData) =>
+    //                     prevSavedData.filter(
+    //                         (filterItem) =>
+    //                             String(filterItem.id) !== e.draggableId
+    //                     )
+    //                 );
+    //                 enqueueSnackbar(msg, { variant: "error" });
+    //                 break;
 
-                    copySavedData2.splice(
-                        dragInfo.current.start.source.index,
-                        1
-                    );
-                    copySavedData2.splice(e.destination.index, 0, target2);
+    //             case "REORDER":
+    //                 if (
+    //                     dragInfo.current.start.source.index ===
+    //                     e.destination.index
+    //                 ) {
+    //                     break;
+    //                 }
+    //                 const copySavedData2 = [...repoList];
+    //                 const target2 =
+    //                     copySavedData2[dragInfo.current.start.source.index];
 
-                    setRepoList(copySavedData2);
-                    enqueueSnackbar(msg, { variant: "info" });
-                    break;
+    //                 copySavedData2.splice(
+    //                     dragInfo.current.start.source.index,
+    //                     1
+    //                 );
+    //                 copySavedData2.splice(e.destination.index, 0, target2);
 
-                default:
-                    enqueueSnackbar(msg, { variant: "info" });
-                    break;
-            }
-            setShowDeleteArea(false);
-            setShowSaveArea(false);
-        },
-        [enqueueSnackbar, checkMovement, repoList, getRepoResult.data]
-    );
+    //                 setRepoList(copySavedData2);
+    //                 enqueueSnackbar(msg, { variant: "info" });
+    //                 break;
+
+    //             default:
+    //                 enqueueSnackbar(msg, { variant: "info" });
+    //                 break;
+    //         }
+    //         setShowDeleteArea(false);
+    //         setShowSaveArea(false);
+    //     },
+    //     [enqueueSnackbar, checkMovement, repoList, getRepoResult.data]
+    // );
 
     return (
         <MainPageBlock>
-            <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-                <SavedAreaBlock>
+            {/* <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}> */}
+            {/* <SavedAreaBlock>
                     <div className="headerArea">
                         <h2>My Repo List</h2>
                     </div>
@@ -382,6 +342,7 @@ const MainPage = () => {
                                                     ref={provided.innerRef}
                                                     {...provided.dragHandleProps}
                                                     {...provided.draggableProps}
+                                                    onClick={() => alert("1")}
                                                 >
                                                     <CardContent>
                                                         <Typography
@@ -426,152 +387,147 @@ const MainPage = () => {
                             )}
                         </Droppable>
                     </div>
-                </SavedAreaBlock>
+                </SavedAreaBlock> */}
 
-                <RepoListAreaBlock>
-                    <div className="searchArea">
-                        <form onSubmit={onSubmit}>
-                            <InputLabel htmlFor="searchRepo"></InputLabel>
-                            <Input
-                                id="searchRepo"
-                                placeholder="Repo Name"
-                                name="searchRepo"
-                                type="text"
-                            />
-                            <Button
-                                variant="text"
-                                type="submit"
-                                size="small"
-                                color="inherit"
+            {/* <RepoListAreaBlock> */}
+
+            <SearchComponent />
+            {/* <div className="searchArea">
+                    <form onSubmit={onSubmit}>
+                        <InputLabel htmlFor="searchRepo"></InputLabel>
+                        <Input
+                            id="searchRepo"
+                            placeholder="Repo Name"
+                            name="searchRepo"
+                            type="text"
+                        />
+                        <Button
+                            variant="text"
+                            type="submit"
+                            size="small"
+                            color="inherit"
+                        >
+                            <SearchIcon />
+                        </Button>
+                    </form>
+                    <Typography variant="body2" color="text.secondary">
+                        Result:{" "}
+                        {getRepoResult.data
+                            ? getRepoResult.data.total_count
+                            : 0}
+                    </Typography>
+                </div> */}
+            {/* Repo 조회 결과 영역 */}
+            <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
+                {(provided, snapshot) => (
+                    <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className="repoListArea"
+                    >
+                        {searchRepoList.map((item, idx) => (
+                            <Draggable
+                                key={item.id}
+                                draggableId={String(item.id)}
+                                index={idx}
                             >
-                                <SearchIcon />
-                            </Button>
-                        </form>
-                        <Typography variant="body2" color="text.secondary">
-                            Result:{" "}
-                            {getRepoResult.data
-                                ? getRepoResult.data.total_count
-                                : 0}
-                        </Typography>
-                    </div>
-                    {/* Repo 조회 결과 영역 */}
-                    <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
-                        {(provided, snapshot) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className="repoListArea"
-                            >
-                                {repoSearchResult.map((item, idx) => (
-                                    <Draggable
-                                        key={item.id}
-                                        draggableId={String(item.id)}
-                                        index={idx}
+                                {(provided) => (
+                                    <Card
+                                        className="repoItem"
+                                        ref={provided.innerRef}
+                                        {...provided.dragHandleProps}
+                                        {...provided.draggableProps}
                                     >
-                                        {(provided) => (
-                                            <Card
-                                                className="repoItem"
-                                                ref={provided.innerRef}
-                                                {...provided.dragHandleProps}
-                                                {...provided.draggableProps}
+                                        <CardContent>
+                                            <Typography
+                                                gutterBottom
+                                                variant="h5"
+                                                component="div"
                                             >
-                                                <CardContent>
-                                                    <Typography
-                                                        gutterBottom
-                                                        variant="h5"
-                                                        component="div"
-                                                    >
-                                                        {item.name}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
-                                                    >
-                                                        {item.owner.login}
-                                                    </Typography>
-                                                </CardContent>
-                                            </Card>
-                                            // <Paper
-                                            //     elevation={1}
-                                            //     className="repoItem"
-                                            //     ref={provided.innerRef}
-                                            //     {...provided.dragHandleProps}
-                                            //     {...provided.draggableProps}
-                                            // >
-                                            //     <ListItem>
-                                            //         <ListItemText
-                                            //             primary={item.name}
-                                            //             secondary={
-                                            //                 item.owner.login
-                                            //             }
-                                            //         />
-                                            //     </ListItem>
-                                            // </Paper>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                    <div className="pagerArea">
-                        <Pagination
-                            page={searchPage}
-                            count={pageCount}
-                            onChange={onChangeSearchPage}
-                        />
+                                                {item.name}
+                                            </Typography>
+                                            <Typography
+                                                variant="body2"
+                                                color="text.secondary"
+                                            >
+                                                {item.owner.login}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
                     </div>
-                </RepoListAreaBlock>
+                )}
+            </Droppable>
+            <div className="pagerArea">
+                <Pagination
+                    page={searchPage}
+                    count={searchRepoListPageCount}
+                    onChange={onChangeSearchPage}
+                />
+            </div>
+            {/* </RepoListAreaBlock> */}
 
-                {/* 특정 데이터 Issue 영역 */}
-                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                    <div>
-                        <List>
-                            {getIssueResult.data?.map((item, idx) => (
-                                <ListItem key={idx}>
-                                    {/* <ListItemText>{selectedRepoName}</ListItemText> */}
-                                    {/* <ListItemText
-                                    primary={item.title}
-                                    secondary={item.body}
-                                /> */}
-                                    <ListItemText
-                                        primary={selectedRepoName}
-                                        secondary={item.title}
-                                    />
-                                    <ListItemText onClick={onClickIssueList}>
-                                        자세히
-                                    </ListItemText>
-                                </ListItem>
-                            ))}
-                        </List>
-                        <Pagination
-                            page={searchIssuePage}
-                            count={issuePageCount}
-                            onChange={onChangeIssuePage}
-                        />
-                    </div>
-                </Dialog>
-            </DragDropContext>
+            {/* 특정 데이터 Issue 영역 */}
+            {/* <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <div>
+                    <List>
+                        {getIssueResult.data?.map((item, idx) => (
+                            <ListItem key={idx}>
+                                <ListItemText
+                                    primary={selectedRepoName}
+                                    secondary={item.title}
+                                />
+                                <ListItemText onClick={onClickIssueList}>
+                                    자세히
+                                </ListItemText>
+                            </ListItem>
+                        ))}
+                    </List>
+                    <Pagination
+                        page={searchIssuePage}
+                        count={issuePageCount}
+                        onChange={onChangeIssuePage}
+                    />
+                </div>
+            </Dialog> */}
+            {/* </DragDropContext> */}
         </MainPageBlock>
     );
 };
 
 const MainPageBlock = styled.div`
-    width: 100vw;
-    height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
 
-    display: flex;
+    flex: 6;
+    background-color: #f6f8fa;
 
-    // 강제 색 변경
-    .css-q0jhri-MuiInputBase-root-MuiInput-root:after {
-        border-bottom: 2px solid black;
+    display: grid;
+    grid-template-rows: 50px 1fr 50px;
+
+    gap: 10px;
+
+    .repoListArea {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr;
+        overflow: scroll;
+
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+        padding: 10px;
+        box-sizing: border-box;
     }
 
-    .repoItem {
-        width: 400px;
-        height: 100px;
-
-        text-align: left;
+    .pagerArea {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 `;
 
@@ -667,50 +623,5 @@ const SavedAreaBlock = styled.div`
         fill: white;
     }
 `;
-const RepoListAreaBlock = styled.div`
-    padding: 10px;
-    box-sizing: border-box;
-
-    flex: 6;
-    background-color: #f6f8fa;
-
-    display: grid;
-    grid-template-rows: 50px 1fr 50px;
-
-    gap: 10px;
-
-    .searchArea {
-        width: 100%;
-        height: 50px;
-        display: flex;
-        align-items: center;
-    }
-
-    .searchArea form {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .repoListArea {
-        display: grid;
-        gap: 10px;
-        grid-template-columns: 1fr 1fr 1fr;
-        overflow: scroll;
-
-        border-top: 1px solid rgba(0, 0, 0, 0.12);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-
-        padding: 10px;
-        box-sizing: border-box;
-    }
-
-    .pagerArea {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-`;
+const RepoListAreaBlock = styled.div``;
 export default MainPage;

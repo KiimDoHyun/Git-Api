@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
-import { rc_repo_repoList } from "../Store/repo";
+import { rc_repo_savedRepoList } from "../Store/repo";
 
 const SetRepoList = () => {
-    const setRepoList = useSetRecoilState(rc_repo_repoList);
+    const setRepoList = useSetRecoilState(rc_repo_savedRepoList);
 
     // localStorage에 저장된 repoList를 Recoil에 저장한다.
     useEffect(() => {
