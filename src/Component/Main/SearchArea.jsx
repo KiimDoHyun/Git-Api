@@ -75,7 +75,7 @@ const SearchArea = () => {
                     name="searchRepo"
                     type="text"
                 />
-                <IconButton>
+                <IconButton type="submit">
                     <SearchIcon />
                 </IconButton>
             </form>
@@ -99,6 +99,7 @@ const SearchAreaBlock = styled.div`
         align-items: center;
         gap: 10px;
         margin-right: 10px;
+        padding: 0 10px;
     }
 `;
 export default SearchArea;
