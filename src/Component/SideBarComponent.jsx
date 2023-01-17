@@ -5,12 +5,22 @@ import styled from "styled-components";
 import { ID_DELETE_AREA, ID_SAVED_AREA } from "../Common/common";
 import { rc_repo_savedRepoList } from "../Store/repo";
 import SaveIcon from "@mui/icons-material/Save";
-import { Card, CardContent, Typography } from "@mui/material";
+import {
+    Button,
+    Card,
+    CardContent,
+    IconButton,
+    Tooltip,
+    Typography,
+} from "@mui/material";
 import { rc_drag_showDeleteArea, rc_drag_showSaveArea } from "../Store/drag";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import SettingsIcon from "@mui/icons-material/Settings";
+import HomeIcon from "@mui/icons-material/Home";
 const SideBarComponent = () => {
+    const location = useLocation();
+
     // 저장된 repo 리스트
     const savedRepoList = useRecoilValue(rc_repo_savedRepoList);
 
@@ -28,10 +38,30 @@ const SideBarComponent = () => {
         [navigate]
     );
 
+    const onClickHome = useCallback(() => {
+        navigate("/");
+    }, []);
+
     return (
         <SideBarComponentBlock>
             <div className="headerArea">
                 <h2>My Repo List</h2>
+                <Tooltip title="설정화면을 활성화 합니다.">
+                    <IconButton>
+                        <SettingsIcon />
+                    </IconButton>
+                </Tooltip>
+
+                {location.pathname !== "/" && (
+                    <Tooltip
+                        title="메인 화면으로 이동합니다."
+                        className="homeIcon"
+                    >
+                        <IconButton onClick={onClickHome}>
+                            <HomeIcon color="primary" />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </div>
             <div className="contentsArea">
                 <Droppable droppableId={ID_SAVED_AREA}>
@@ -126,8 +156,16 @@ const SideBarComponentBlock = styled.div`
     border-right: 1px solid rgba(0, 0, 0, 0.12);
 
     .headerArea {
-        padding-left: 16px;
+        padding: 0 15px;
         flex: 1;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .homeIcon {
+        margin-left: auto;
     }
 
     .contentsArea {
@@ -186,6 +224,7 @@ const SideBarComponentBlock = styled.div`
 
     .saveIcon {
         background-color: skyblue;
+        pointer-events: none;
     }
     .deleteIcon {
         background-color: tomato;
