@@ -1,4 +1,9 @@
-import { Pagination } from "@mui/material";
+import {
+    CircularProgress,
+    Pagination,
+    Skeleton,
+    Typography,
+} from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { getIssueApi } from "../../Api/git";
@@ -33,19 +38,37 @@ const IssueListComponent = ({ ownerName, repoName, open_issues_count }) => {
 
     return (
         <IssueListComponentBlock>
+            {getIssueResult.isLoading && (
+                <div className="loading">
+                    <div className="loadingContent">
+                        <CircularProgress />
+                    </div>
+                </div>
+            )}
             <div className="issueList">
-                {getIssueResult.data?.map((item) => (
-                    <IssueListItem
-                        key={item.id}
-                        title={"클릭하면 해당 Issue 페이지로 이동합니다."}
-                        onClick={() => onClick(item.html_url)}
-                        repoName={repoName}
-                        issueTitle={item.title}
-                        labels={item.labels}
-                        userImage={item.user.avatar_url}
-                        userName={item.user.login}
-                    />
-                ))}
+                {getIssueResult.data && getIssueResult.data.length > 0 ? (
+                    getIssueResult.data.map((item) => (
+                        <IssueListItem
+                            key={item.id}
+                            title={"클릭하면 해당 Issue 페이지로 이동합니다."}
+                            onClick={() => onClick(item.html_url)}
+                            repoName={repoName}
+                            issueTitle={item.title}
+                            labels={item.labels}
+                            userImage={item.user.avatar_url}
+                            userName={item.user.login}
+                        />
+                    ))
+                ) : (
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        component="div"
+                        className="noData"
+                    >
+                        No Issues
+                    </Typography>
+                )}
             </div>
             <div className="pagerArea">
                 <Pagination
@@ -69,6 +92,7 @@ const IssueListComponentBlock = styled.div`
     display: grid;
     grid-template-rows: 1fr 50px;
     gap: 10px;
+    position: relative;
 
     .issueList {
         width: 100%;
@@ -122,6 +146,36 @@ const IssueListComponentBlock = styled.div`
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+    }
+
+    .loading {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loadingContent {
+        width: 100px;
+        height: 80px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #85858547;
+
+        border-radius: 10%;
+    }
+
+    .noData {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 `;
 export default IssueListComponent;
