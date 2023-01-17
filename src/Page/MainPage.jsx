@@ -38,32 +38,9 @@ import { useSnackbar } from "notistack";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchComponent from "../Component/Main/SearchComponent";
-
-const ID_SAVED_AREA = "SAVED_AREA";
-const ID_SEARCH_RESULT_AREA = "SEARCH_RESULT_AREA";
-const ID_DELETE_AREA = "DELETE_AREA";
+import SearchRepoListComponent from "../Component/Main/SearchRepoListComponent";
 
 const MainPage = () => {
-    const [searchPage, setSearchPage] = useRecoilState(re_repo_searchPage);
-
-    // 저장된 repo 리스트
-    const [savedRepoList, setSavedRepoList] = useRecoilState(
-        rc_repo_savedRepoList
-    );
-
-    // 조회 결과 리스트
-    const searchRepoList = useRecoilValue(rc_repo_searchRepoList);
-
-    // 리스트 조회 결과로 새성되는 Pagination 개수
-    const searchRepoListPageCount = useRecoilValue(
-        rc_repo_searchRepoList_pageCount
-    );
-
-    // Repo 조회 page
-    const onChangeSearchPage = useCallback((_, value) => {
-        setSearchPage(value);
-    }, []);
-
     // 이슈 조회 page
     // const onChangeIssuePage = useCallback((_, value) => {
     //     setSearchIssuePage(value);
@@ -97,10 +74,6 @@ const MainPage = () => {
     // }, [selectedRepoURL]);
 
     // 저장, 삭제가 발생하면 localStorage의 데이터를 수정한다.
-    useEffect(() => {
-        const data = JSON.stringify(savedRepoList);
-        window.localStorage.setItem("repoList", data);
-    }, [savedRepoList]);
 
     // Repo 조회
     // useEffect(() => {
@@ -150,40 +123,40 @@ const MainPage = () => {
     3. 저장된 영역에서 저장된 영역으로 이동하는 경우 (+ 순서 변경에 해당한다.)
     */
     // 이동 체크
-    const checkMovement = useCallback((start, end) => {
-        let type = "ERROR";
-        let msg = "";
+    // const checkMovement = useCallback((start, end) => {
+    //     let type = "ERROR";
+    //     let msg = "";
 
-        // 에러
-        if (start === ID_SEARCH_RESULT_AREA && end === ID_SEARCH_RESULT_AREA) {
-            type = "ERROR";
-            msg = "조회된 데이터의 순서는 변경할 수 없습니다.";
-        } else if (start === ID_SAVED_AREA && end === ID_SEARCH_RESULT_AREA) {
-            type = "ERROR";
-            msg = "이미 저장된 데이터를 조회 영역으로 이동할 수 없습니다.";
-        }
-        // 정상 이동
-        // 1번 경우에 해당함
-        else if (start === ID_SEARCH_RESULT_AREA && end === ID_SAVED_AREA) {
-            type = "SAVE";
-            msg = "데이터가 저장되었습니다.";
-        }
-        // 2번 경우에 해당함
-        else if (start === ID_SAVED_AREA && end === ID_DELETE_AREA) {
-            type = "DELETE";
-            msg = "데이터가 제거되었습니다.";
-        }
-        // 3번 경우에 해당함
-        else if (start === ID_SAVED_AREA && end === ID_SAVED_AREA) {
-            type = "REORDER";
-            msg = "데이터의 순서가 변경되었습니다.";
-        } else {
-            type = "ERROR";
-            msg = "잘못된 이동입니다.";
-        }
+    //     // 에러
+    //     if (start === ID_SEARCH_RESULT_AREA && end === ID_SEARCH_RESULT_AREA) {
+    //         type = "ERROR";
+    //         msg = "조회된 데이터의 순서는 변경할 수 없습니다.";
+    //     } else if (start === ID_SAVED_AREA && end === ID_SEARCH_RESULT_AREA) {
+    //         type = "ERROR";
+    //         msg = "이미 저장된 데이터를 조회 영역으로 이동할 수 없습니다.";
+    //     }
+    //     // 정상 이동
+    //     // 1번 경우에 해당함
+    //     else if (start === ID_SEARCH_RESULT_AREA && end === ID_SAVED_AREA) {
+    //         type = "SAVE";
+    //         msg = "데이터가 저장되었습니다.";
+    //     }
+    //     // 2번 경우에 해당함
+    //     else if (start === ID_SAVED_AREA && end === ID_DELETE_AREA) {
+    //         type = "DELETE";
+    //         msg = "데이터가 제거되었습니다.";
+    //     }
+    //     // 3번 경우에 해당함
+    //     else if (start === ID_SAVED_AREA && end === ID_SAVED_AREA) {
+    //         type = "REORDER";
+    //         msg = "데이터의 순서가 변경되었습니다.";
+    //     } else {
+    //         type = "ERROR";
+    //         msg = "잘못된 이동입니다.";
+    //     }
 
-        return { type, msg };
-    }, []);
+    //     return { type, msg };
+    // }, []);
 
     // useEffect(() => {
     //     if (getRepoResult.data) {
@@ -310,190 +283,11 @@ const MainPage = () => {
 
     return (
         <MainPageBlock>
-            {/* <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}> */}
-            {/* <SavedAreaBlock>
-                    <div className="headerArea">
-                        <h2>My Repo List</h2>
-                    </div>
-                    <div className="contentsArea">
-                        <Droppable droppableId={ID_SAVED_AREA}>
-                            {(provided, snapshot) => (
-                                <div
-                                    className={
-                                        showSaveArea
-                                            ? "showArea activeSaveArea"
-                                            : "showArea"
-                                    }
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                >
-                                    <div className="IconCover saveIcon">
-                                        <SaveIcon />
-                                    </div>
-                                    {repoList.map((item, idx) => (
-                                        <Draggable
-                                            key={item.id}
-                                            draggableId={String(item.id)}
-                                            index={idx}
-                                        >
-                                            {(provided) => (
-                                                <Card
-                                                    className="repoItem"
-                                                    ref={provided.innerRef}
-                                                    {...provided.dragHandleProps}
-                                                    {...provided.draggableProps}
-                                                    onClick={() => alert("1")}
-                                                >
-                                                    <CardContent>
-                                                        <Typography
-                                                            gutterBottom
-                                                            variant="h5"
-                                                            component="div"
-                                                        >
-                                                            {item.name}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body2"
-                                                            color="text.secondary"
-                                                        >
-                                                            {item.owner.login}
-                                                        </Typography>
-                                                    </CardContent>
-                                                </Card>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                        <Divider />
-                        <Droppable droppableId={ID_DELETE_AREA}>
-                            {(provided, snapshot) => (
-                                <div
-                                    className={
-                                        showDeleteArea
-                                            ? "deleteArea activeDeleteArea"
-                                            : "deleteArea"
-                                    }
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                >
-                                    {provided.placeholder}
-                                    <div className="IconCover deleteIcon">
-                                        <DeleteForeverIcon />
-                                    </div>
-                                </div>
-                            )}
-                        </Droppable>
-                    </div>
-                </SavedAreaBlock> */}
-
-            {/* <RepoListAreaBlock> */}
-
+            {/* 검색 영역 */}
             <SearchComponent />
-            {/* <div className="searchArea">
-                    <form onSubmit={onSubmit}>
-                        <InputLabel htmlFor="searchRepo"></InputLabel>
-                        <Input
-                            id="searchRepo"
-                            placeholder="Repo Name"
-                            name="searchRepo"
-                            type="text"
-                        />
-                        <Button
-                            variant="text"
-                            type="submit"
-                            size="small"
-                            color="inherit"
-                        >
-                            <SearchIcon />
-                        </Button>
-                    </form>
-                    <Typography variant="body2" color="text.secondary">
-                        Result:{" "}
-                        {getRepoResult.data
-                            ? getRepoResult.data.total_count
-                            : 0}
-                    </Typography>
-                </div> */}
-            {/* Repo 조회 결과 영역 */}
-            <Droppable droppableId={ID_SEARCH_RESULT_AREA}>
-                {(provided, snapshot) => (
-                    <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className="repoListArea"
-                    >
-                        {searchRepoList.map((item, idx) => (
-                            <Draggable
-                                key={item.id}
-                                draggableId={String(item.id)}
-                                index={idx}
-                            >
-                                {(provided) => (
-                                    <Card
-                                        className="repoItem"
-                                        ref={provided.innerRef}
-                                        {...provided.dragHandleProps}
-                                        {...provided.draggableProps}
-                                    >
-                                        <CardContent>
-                                            <Typography
-                                                gutterBottom
-                                                variant="h5"
-                                                component="div"
-                                            >
-                                                {item.name}
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                            >
-                                                {item.owner.login}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </div>
-                )}
-            </Droppable>
-            <div className="pagerArea">
-                <Pagination
-                    page={searchPage}
-                    count={searchRepoListPageCount}
-                    onChange={onChangeSearchPage}
-                />
-            </div>
-            {/* </RepoListAreaBlock> */}
 
-            {/* 특정 데이터 Issue 영역 */}
-            {/* <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <div>
-                    <List>
-                        {getIssueResult.data?.map((item, idx) => (
-                            <ListItem key={idx}>
-                                <ListItemText
-                                    primary={selectedRepoName}
-                                    secondary={item.title}
-                                />
-                                <ListItemText onClick={onClickIssueList}>
-                                    자세히
-                                </ListItemText>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Pagination
-                        page={searchIssuePage}
-                        count={issuePageCount}
-                        onChange={onChangeIssuePage}
-                    />
-                </div>
-            </Dialog> */}
-            {/* </DragDropContext> */}
+            {/* Repo 조회 결과 영역 */}
+            <SearchRepoListComponent />
         </MainPageBlock>
     );
 };
