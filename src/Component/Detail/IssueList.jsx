@@ -1,9 +1,3 @@
-import {
-    CircularProgress,
-    Pagination,
-    Skeleton,
-    Typography,
-} from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { getIssueApi } from "../../Api/git";

@@ -7,7 +7,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 const DeleteArea = ({ showDeleteArea }) => {
     return (
         <Droppable droppableId={ID_DELETE_AREA}>
-            {(provided, snapshot) => (
+            {(provided) => (
                 <DeleteAreaBlock
                     className={
                         showDeleteArea

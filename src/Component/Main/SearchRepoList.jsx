@@ -1,4 +1,3 @@
-import { Pagination, Typography } from "@mui/material";
 import React, { useCallback, useEffect } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
