@@ -57,9 +57,7 @@ const SearchArea = () => {
 
         if (getRepoResult.data) {
             setSearchRepoList(getRepoResult.data.items);
-            setSearchRepoListPageCount(
-                Math.ceil(getRepoResult.data.total_count / 30)
-            );
+            setSearchRepoListPageCount(getRepoResult.data.total_count);
         } else {
             setSearchRepoList([]);
             setSearchRepoListPageCount(0);

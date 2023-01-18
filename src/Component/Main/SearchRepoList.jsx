@@ -15,6 +15,7 @@ import { rc_user_user } from "../../Store/user";
 import CommonListItem from "../Common/CommonListItem";
 import Loading from "../Common/Loading";
 import NoData from "../Common/NoData";
+import PageArea from "../Common/PageArea";
 
 const SearchRepoList = ({ saveTargetRef }) => {
     // 검색 Page
@@ -105,13 +106,11 @@ const SearchRepoList = ({ saveTargetRef }) => {
                     </div>
                 )}
             </Droppable>
-            <div className="pagerArea">
-                <Pagination
-                    page={searchPage}
-                    count={searchRepoListPageCount}
-                    onChange={onChangeSearchPage}
-                />
-            </div>
+            <PageArea
+                page={searchPage}
+                count={searchRepoListPageCount}
+                onChange={onChangeSearchPage}
+            />
         </SearchRepoListBlock>
     );
 };

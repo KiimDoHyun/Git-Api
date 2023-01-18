@@ -10,6 +10,7 @@ import { getIssueApi } from "../../Api/git";
 import useAxios from "../../Hook/useAxios";
 import Loading from "../Common/Loading";
 import NoData from "../Common/NoData";
+import PageArea from "../Common/PageArea";
 import IssueListItem from "./IssueListItem";
 
 const IssueList = ({ ownerName, repoName, open_issues_count }) => {
@@ -57,23 +58,13 @@ const IssueList = ({ ownerName, repoName, open_issues_count }) => {
                     ))
                 ) : (
                     <NoData text={"No Issues"} />
-                    // <Typography
-                    //     variant="body2"
-                    //     color="text.secondary"
-                    //     component="div"
-                    //     className="noData"
-                    // >
-
-                    // </Typography>
                 )}
             </div>
-            <div className="pagerArea">
-                <Pagination
-                    page={searchPage}
-                    count={Math.ceil(open_issues_count / 30)}
-                    onChange={onChangeSearchPage}
-                />
-            </div>
+            <PageArea
+                page={searchPage}
+                count={open_issues_count}
+                onChange={onChangeSearchPage}
+            />
         </IssueListBlock>
     );
 };
@@ -100,13 +91,6 @@ const IssueListBlock = styled.div`
 
         padding: 10px 0;
         box-sizing: border-box;
-    }
-
-    .pagerArea {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .repoItem {
@@ -143,9 +127,6 @@ const IssueListBlock = styled.div`
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-    }
-
-    .noData {
     }
 `;
 export default IssueList;

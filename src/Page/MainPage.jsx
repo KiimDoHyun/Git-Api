@@ -39,12 +39,5 @@ const MainPageBlock = styled.div`
         padding: 10px;
         box-sizing: border-box;
     }
-
-    .pagerArea {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
 `;
 export default MainPage;
