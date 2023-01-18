@@ -35,4 +35,4 @@ const LoadingBlock = styled.div`
         border-radius: 10%;
     }
 `;
-export default Loading;
+export default React.memo(Loading);

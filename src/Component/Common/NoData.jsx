@@ -19,4 +19,4 @@ const NoDataBlock = styled.div`
     align-items: center;
     justify-content: center;
 `;
-export default NoData;
+export default React.memo(NoData);

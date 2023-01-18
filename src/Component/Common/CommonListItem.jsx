@@ -42,4 +42,4 @@ const CommonListItem = ({
     );
 };
 
-export default CommonListItem;
+export default React.memo(CommonListItem);
