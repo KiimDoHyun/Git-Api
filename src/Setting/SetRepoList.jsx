@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
+import { getLocalStorage, setLocalStorage } from "../Common/common";
 import { rc_repo_savedRepoList } from "../Store/repo";
 import { rc_user_user, rc_user_userList } from "../Store/user";
 
@@ -10,23 +11,21 @@ const SetRepoList = () => {
 
     // localStorage에 저장된 repoList를 Recoil에 저장한다.
     useEffect(() => {
-        const currentUser = window.localStorage.getItem("currentUser");
+        const currentUser = getLocalStorage("currentUser");
 
         if (!currentUser) {
-            window.localStorage.setItem("currentUser", "user1");
-            window.localStorage.setItem("user1_repoList", "[]");
-            window.localStorage.setItem("userList", "user1");
+            setLocalStorage("currentUser", "user1");
+            setLocalStorage("user1_repoList", []);
+            setLocalStorage("userList", ["user1"]);
         }
 
-        const data = JSON.parse(
-            window.localStorage.getItem(`${currentUser}_repoList`)
-        );
+        const data = getLocalStorage(`${currentUser}_repoList`);
 
-        const userList = window.localStorage.getItem("userList");
+        const userList = getLocalStorage("userList");
 
         setRepoList(data || []);
-        setCurrentUser(currentUser || "user1");
-        setUserList(userList.split(","));
+        setCurrentUser(currentUser || ["user1"]);
+        setUserList(userList);
     }, [setRepoList, setCurrentUser, setUserList]);
 
     return <></>;

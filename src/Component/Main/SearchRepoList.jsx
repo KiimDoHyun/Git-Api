@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { ID_SEARCH_RESULT_AREA } from "../../Common/common";
+import { ID_SEARCH_RESULT_AREA, setLocalStorage } from "../../Common/common";
 import {
     rc_repo_savedRepoList,
     rc_repo_searchRepoList,
@@ -56,8 +56,7 @@ const SearchRepoList = ({ saveTargetRef }) => {
     useEffect(() => {
         if (!currentUser) return;
 
-        const data = JSON.stringify(savedRepoList);
-        window.localStorage.setItem(`${currentUser}_repoList`, data);
+        setLocalStorage(`${currentUser}_repoList`, savedRepoList);
     }, [currentUser, savedRepoList]);
 
     return (

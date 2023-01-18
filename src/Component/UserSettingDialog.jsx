@@ -14,6 +14,11 @@ import InputArea from "./UserSettingDialog/InputArea";
 import UserListArea from "./UserSettingDialog/UserListArea";
 import ButtonArea from "./UserSettingDialog/ButtonArea";
 import { useNavigate } from "react-router-dom";
+import {
+    getLocalStorage,
+    removeLocalStorage,
+    setLocalStorage,
+} from "../Common/common";
 const UserSettingDialog = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -62,8 +67,8 @@ const UserSettingDialog = () => {
             }
 
             setUserList((prevUserList) => [...prevUserList, inputValue]);
-            window.localStorage.setItem(`${inputValue}_repoList`, "[]");
-            window.localStorage.setItem(`userList`, [...userList, inputValue]);
+            setLocalStorage(`${inputValue}_repoList`, []);
+            setLocalStorage(`userList`, [...userList, inputValue]);
             e.target[0].value = "";
             enqueueSnackbar("새로운 사용자를 등록했습니다.", {
                 variant: "success",
@@ -80,11 +85,13 @@ const UserSettingDialog = () => {
         }
         // 사용자를 변경한다.
         setCurrentUser(selectedUser);
-        window.localStorage.setItem(`currentUser`, selectedUser);
 
-        const data = JSON.parse(
-            window.localStorage.getItem(`${selectedUser}_repoList`)
-        );
+        // localStorage의 현재 사용자 정보를 변경한다.
+        setLocalStorage(`currentUser`, selectedUser);
+
+        // 선택된 사용자의 RepoList 를 가져온다.
+        // 없는 경우 빈 배열로 할당한다.
+        const data = getLocalStorage(`${selectedUser}_repoList`);
 
         setRepoList(data || []);
         setShowSetUserModal(false);
@@ -126,11 +133,11 @@ const UserSettingDialog = () => {
                     const delResult = prevUserList.filter(
                         (filterItem) => filterItem !== item
                     );
-                    window.localStorage.setItem(`userList`, delResult);
 
+                    setLocalStorage(`userList`, delResult);
                     return delResult;
                 });
-                window.localStorage.removeItem(`${item}_repoList`);
+                removeLocalStorage(`${item}_repoList`);
                 enqueueSnackbar("사용자가 제거되었습니다.", {
                     variant: "error",
                 });
