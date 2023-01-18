@@ -1,5 +1,6 @@
 import {
     Checkbox,
+    DialogContentText,
     IconButton,
     List,
     ListItem,
@@ -8,7 +9,6 @@ import {
     ListItemText,
 } from "@mui/material";
 import React from "react";
-import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const UserListArea = ({
@@ -19,7 +19,8 @@ const UserListArea = ({
 }) => {
     return (
         <>
-            <h4>User List</h4>
+            <DialogContentText>User List</DialogContentText>
+
             <List>
                 {userList.map((item, idx) => (
                     <ListItem
@@ -52,5 +53,4 @@ const UserListArea = ({
     );
 };
 
-const UserListAreaBlock = styled.div``;
 export default React.memo(UserListArea);

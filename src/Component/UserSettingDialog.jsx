@@ -1,7 +1,6 @@
-import { Dialog, Divider } from "@mui/material";
+import { Dialog, DialogContent, Divider } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import styled from "styled-components";
 import {
     rc_user_showSetUserModal,
     rc_user_user,
@@ -39,42 +38,64 @@ const UserSettingDialog = () => {
     // 사용자 리스트
     const [userList, setUserList] = useRecoilState(rc_user_userList);
 
+    // 사용자 추가하기전 입력값 체크
+    const checkValue = useCallback(
+        (input) => {
+            let check = true;
+
+            // 최대 등록 개수 초과
+            if (userList.length === 5) {
+                enqueueSnackbar("사용자는 5명 까지 등록 가능합니다.", {
+                    variant: "warning",
+                });
+                check = false;
+            }
+
+            // 중복 사용자 등록
+            if (userList.find((findItem) => findItem === input)) {
+                enqueueSnackbar("이미 등록된 사용자입니다.", {
+                    variant: "warning",
+                });
+                check = false;
+            }
+
+            // 빈 입력값
+            if (!input) {
+                enqueueSnackbar("등록할 사용자명을 입력하세요", {
+                    variant: "warning",
+                });
+                check = false;
+            }
+
+            return check;
+        },
+        [userList, enqueueSnackbar]
+    );
+
     // 새로운 사용자 추가
     const onSubmit = useCallback(
         (e) => {
             e.preventDefault();
             const inputValue = e.target[0].value;
 
-            if (userList.length === 5) {
-                enqueueSnackbar("사용자는 5명 까지 등록 가능합니다.", {
-                    variant: "warning",
-                });
-                return;
-            }
+            // 사용자 입력값 체크
+            const inputCheckResult = checkValue(inputValue);
+            if (!inputCheckResult) return;
 
-            if (userList.find((findItem) => findItem === inputValue)) {
-                enqueueSnackbar("이미 등록된 사용자입니다.", {
-                    variant: "warning",
-                });
-                return;
-            }
-
-            if (!inputValue) {
-                enqueueSnackbar("등록할 사용자명을 입력하세요", {
-                    variant: "warning",
-                });
-                return;
-            }
-
+            // 기존 사용자 배열, localStorage 업데이트
             setUserList((prevUserList) => [...prevUserList, inputValue]);
             setLocalStorage(`${inputValue}_repoList`, []);
             setLocalStorage(`userList`, [...userList, inputValue]);
+
+            // 입력값 초기화
             e.target[0].value = "";
+
+            // 메세지
             enqueueSnackbar("새로운 사용자를 등록했습니다.", {
                 variant: "success",
             });
         },
-        [userList, enqueueSnackbar, setUserList]
+        [userList, enqueueSnackbar, setUserList, checkValue]
     );
 
     // 적용하기
@@ -152,11 +173,10 @@ const UserSettingDialog = () => {
     return (
         <>
             <Dialog open={showSetUserModal} onClose={onClose}>
-                <UserSettingDialogBlock>
-                    <TitleArea currentUser={currentUser} />
+                <TitleArea />
+                <Divider />
 
-                    <Divider />
-
+                <DialogContent>
                     <InputArea onSubmit={onSubmit} />
 
                     <Divider />
@@ -171,15 +191,9 @@ const UserSettingDialog = () => {
                     <Divider />
 
                     <ButtonArea onClickOK={onClickOK} onClose={onClose} />
-                </UserSettingDialogBlock>
+                </DialogContent>
             </Dialog>
         </>
     );
 };
-
-const UserSettingDialogBlock = styled.div`
-    width: 500px;
-    padding: 10px;
-    box-sizing: border-box;
-`;
 export default UserSettingDialog;

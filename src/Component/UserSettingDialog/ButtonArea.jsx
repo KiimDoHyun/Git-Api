@@ -1,12 +1,16 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
 const ButtonArea = ({ onClickOK, onClose }) => {
     return (
         <ButtonAreaBlock>
-            <Button onClick={onClickOK}>적용하기</Button>
-            <Button onClick={onClose}>닫기</Button>
+            <Tooltip title="사용자 변경을 적용합니다.">
+                <Button onClick={onClickOK}>Apply</Button>
+            </Tooltip>
+            <Tooltip title="사용자 변경을 적용하지 않습니다.">
+                <Button onClick={onClose}>Close</Button>
+            </Tooltip>
         </ButtonAreaBlock>
     );
 };
