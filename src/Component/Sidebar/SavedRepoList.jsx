@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { ID_SAVED_AREA } from "../../Common/common";
 import SaveIcon from "@mui/icons-material/Save";
 import CommonListItem from "../Common/CommonListItem";
+import NoData from "../Common/NoData";
 
 const SavedRepoList = ({ showSaveArea, savedRepoList, onClick }) => {
     return (
@@ -21,23 +22,27 @@ const SavedRepoList = ({ showSaveArea, savedRepoList, onClick }) => {
                     <div className="IconCover saveIcon">
                         <SaveIcon />
                     </div>
-                    {savedRepoList.map((item, idx) => (
-                        <Draggable
-                            key={item.id}
-                            draggableId={String(item.id)}
-                            index={idx}
-                        >
-                            {(provided, snapshotDG) => (
-                                <CommonListItem
-                                    provided={provided}
-                                    snapshot={snapshotDG}
-                                    onClick={() => onClick(item)}
-                                    title={item.name}
-                                    content={item.owner.login}
-                                />
-                            )}
-                        </Draggable>
-                    ))}
+                    {savedRepoList.length > 0 ? (
+                        savedRepoList.map((item, idx) => (
+                            <Draggable
+                                key={item.id}
+                                draggableId={String(item.id)}
+                                index={idx}
+                            >
+                                {(provided, snapshotDG) => (
+                                    <CommonListItem
+                                        provided={provided}
+                                        snapshot={snapshotDG}
+                                        onClick={() => onClick(item)}
+                                        title={item.name}
+                                        content={item.owner.login}
+                                    />
+                                )}
+                            </Draggable>
+                        ))
+                    ) : (
+                        <NoData text="저장된 Repository가 없습니다." />
+                    )}
                     {provided.placeholder}
                 </SavedRepoListBlock>
             )}
