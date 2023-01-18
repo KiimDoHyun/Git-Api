@@ -116,7 +116,7 @@ const UserSettingDialog = () => {
         (item) => {
             if (item === selectedUser) {
                 enqueueSnackbar("현재 선택된 사용자는 삭제할 수 없습니다.", {
-                    variant: "error",
+                    variant: "warning",
                 });
                 return;
             }
@@ -131,6 +131,9 @@ const UserSettingDialog = () => {
                     return delResult;
                 });
                 window.localStorage.removeItem(`${item}_repoList`);
+                enqueueSnackbar("사용자가 제거되었습니다.", {
+                    variant: "error",
+                });
             }
         },
         [selectedUser, enqueueSnackbar, setUserList]

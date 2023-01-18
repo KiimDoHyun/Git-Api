@@ -13,7 +13,7 @@ const SetRepoList = () => {
         const currentUser = window.localStorage.getItem("currentUser");
 
         if (!currentUser) {
-            window.localStorage.setItem("user1", "user1");
+            window.localStorage.setItem("currentUser", "user1");
             window.localStorage.setItem("user1_repoList", "[]");
             window.localStorage.setItem("userList", "user1");
         }
