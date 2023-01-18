@@ -37,11 +37,11 @@ const SideBar = () => {
 
     const onClickSetting = useCallback(() => {
         setShowSetUserModal(true);
-    }, []);
+    }, [setShowSetUserModal]);
 
     const onClickHome = useCallback(() => {
         navigate("/");
-    }, []);
+    }, [navigate]);
 
     return (
         <SideBarBlock>

@@ -34,21 +34,23 @@ const SearchArea = () => {
     );
 
     // onSubmit 이벤트
-    const onSubmit = useCallback((e) => {
-        e.preventDefault();
+    const onSubmit = useCallback(
+        (e) => {
+            e.preventDefault();
 
-        // 입력값
-        const inputValue = e.target[0].value;
-        setSearchValue(inputValue);
-        setSearchPage(1);
-    }, []);
+            // 입력값
+            const inputValue = e.target[0].value;
+            setSearchValue(inputValue);
+            setSearchPage(1);
+        },
+        [setSearchPage]
+    );
 
     // 검색
     useEffect(() => {
         if (!searchValue) return;
-
         getSearchRepo({ searchParams: searchValue, page: searchPage });
-    }, [searchValue, searchPage]);
+    }, [searchValue, searchPage, getSearchRepo]);
 
     // 검색 결과 처리
     useEffect(() => {
@@ -62,7 +64,12 @@ const SearchArea = () => {
             setSearchRepoList([]);
             setSearchRepoListPageCount(0);
         }
-    }, [getRepoResult]);
+    }, [
+        getRepoResult,
+        setSearchPageIsLoading,
+        setSearchRepoList,
+        setSearchRepoListPageCount,
+    ]);
 
     return (
         <SearchAreaBlock>

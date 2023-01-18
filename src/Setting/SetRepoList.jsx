@@ -27,7 +27,7 @@ const SetRepoList = () => {
         setRepoList(data || []);
         setCurrentUser(currentUser || "user1");
         setUserList(userList.split(","));
-    }, [setRepoList]);
+    }, [setRepoList, setCurrentUser, setUserList]);
 
     return <></>;
 };

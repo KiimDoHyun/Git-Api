@@ -35,14 +35,20 @@ const SearchRepoList = ({ saveTargetRef }) => {
     const searchPageIsLoading = useRecoilValue(re_repo_searchPageIsLoading);
 
     // 아이템 onMouseDown 이벤트
-    const onMouseDown = useCallback((item) => {
-        saveTargetRef.current = item;
-    }, []);
+    const onMouseDown = useCallback(
+        (item) => {
+            saveTargetRef.current = item;
+        },
+        [saveTargetRef]
+    );
 
     // Repo Pagination onChange 이벤트
-    const onChangeSearchPage = useCallback((_, value) => {
-        setSearchPage(value);
-    }, []);
+    const onChangeSearchPage = useCallback(
+        (_, value) => {
+            setSearchPage(value);
+        },
+        [setSearchPage]
+    );
 
     // 현재 사용자
     const currentUser = useRecoilValue(rc_user_user);

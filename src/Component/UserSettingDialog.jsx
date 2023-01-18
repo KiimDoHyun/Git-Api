@@ -69,7 +69,7 @@ const UserSettingDialog = () => {
                 variant: "success",
             });
         },
-        [userList]
+        [userList, enqueueSnackbar, setUserList]
     );
 
     // 적용하기
@@ -90,13 +90,21 @@ const UserSettingDialog = () => {
         setShowSetUserModal(false);
         enqueueSnackbar("사용자가 변경되었습니다.", { variant: "success" });
         navigate("/");
-    }, [currentUser, selectedUser]);
+    }, [
+        currentUser,
+        selectedUser,
+        enqueueSnackbar,
+        navigate,
+        setCurrentUser,
+        setRepoList,
+        setShowSetUserModal,
+    ]);
 
     // 닫기
     const onClose = useCallback(() => {
         setShowSetUserModal(false);
         setSelectedUser(currentUser);
-    }, [currentUser]);
+    }, [currentUser, setShowSetUserModal]);
 
     // 사용자 리스트 선택
     const onClickList = useCallback((item) => {
@@ -120,7 +128,7 @@ const UserSettingDialog = () => {
                 window.localStorage.removeItem(`${item}_repoList`);
             }
         },
-        [selectedUser]
+        [selectedUser, enqueueSnackbar, setUserList]
     );
 
     useEffect(() => {

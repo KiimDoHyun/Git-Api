@@ -66,24 +66,27 @@ const useOnDrag = () => {
         return { type, msg };
     }, []);
 
-    const onDragStart = useCallback((e) => {
-        // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
-        dragInfo.current.start = e;
-        // console.log("e: ", e);
+    const onDragStart = useCallback(
+        (e) => {
+            // onDragEnd에서 사용하기 위해 현재 정보를 저장한다.
+            dragInfo.current.start = e;
+            // console.log("e: ", e);
 
-        const {
-            source: { droppableId },
-        } = e;
+            const {
+                source: { droppableId },
+            } = e;
 
-        // 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
-        if (droppableId === ID_SAVED_AREA) {
-            setShowDeleteArea(true);
-        }
-        // 조회 영역에서 드래그를 하는 경우 저장 영역을 표시해 준다.
-        else {
-            setShowSaveArea(true);
-        }
-    }, []);
+            // 저장 영역에서 드래그를 하는 경우 제거 영역을 표시해준다.
+            if (droppableId === ID_SAVED_AREA) {
+                setShowDeleteArea(true);
+            }
+            // 조회 영역에서 드래그를 하는 경우 저장 영역을 표시해 준다.
+            else {
+                setShowSaveArea(true);
+            }
+        },
+        [setShowDeleteArea, setShowSaveArea]
+    );
 
     const onDragEnd = useCallback(
         (e) => {
@@ -155,7 +158,13 @@ const useOnDrag = () => {
             setShowDeleteArea(false);
             setShowSaveArea(false);
         },
-        [enqueueSnackbar, checkMovement]
+        [
+            enqueueSnackbar,
+            checkMovement,
+            setSavedRepoList,
+            setShowDeleteArea,
+            setShowSaveArea,
+        ]
     );
 
     return [saveTargetRef, onDragStart, onDragEnd];
