@@ -13,7 +13,9 @@ import TitleArea from "./UserSettingDialog/TitleArea";
 import InputArea from "./UserSettingDialog/InputArea";
 import UserListArea from "./UserSettingDialog/UserListArea";
 import ButtonArea from "./UserSettingDialog/ButtonArea";
+import { useNavigate } from "react-router-dom";
 const UserSettingDialog = () => {
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     // 사용자 Dialog 활성화 여부
     const [showSetUserModal, setShowSetUserModal] = useRecoilState(
@@ -87,6 +89,7 @@ const UserSettingDialog = () => {
         setRepoList(data || []);
         setShowSetUserModal(false);
         enqueueSnackbar("사용자가 변경되었습니다.", { variant: "success" });
+        navigate("/");
     }, [currentUser, selectedUser]);
 
     // 닫기
