@@ -122,9 +122,14 @@ const UserSettingDialog = () => {
             }
 
             if (window.confirm("삭제하시겠습니까?")) {
-                setUserList((prevUserList) =>
-                    prevUserList.filter((filterItem) => filterItem !== item)
-                );
+                setUserList((prevUserList) => {
+                    const delResult = prevUserList.filter(
+                        (filterItem) => filterItem !== item
+                    );
+                    window.localStorage.setItem(`userList`, delResult);
+
+                    return delResult;
+                });
                 window.localStorage.removeItem(`${item}_repoList`);
             }
         },
