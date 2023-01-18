@@ -20,4 +20,4 @@ const PageAreaBlock = styled.div`
     justify-content: center;
     align-items: center;
 `;
-export default PageArea;
+export default React.memo(PageArea);

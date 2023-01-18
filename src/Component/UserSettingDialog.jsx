@@ -1,17 +1,4 @@
-import {
-    Button,
-    Checkbox,
-    Dialog,
-    Divider,
-    IconButton,
-    Input,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography,
-} from "@mui/material";
+import { Dialog, Divider } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -20,19 +7,21 @@ import {
     rc_user_user,
     rc_user_userList,
 } from "../Store/user";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { rc_repo_savedRepoList } from "../Store/repo";
 import { useSnackbar } from "notistack";
-import AddIcon from "@mui/icons-material/Add";
+import TitleArea from "./UserSettingDialog/TitleArea";
+import InputArea from "./UserSettingDialog/InputArea";
+import UserListArea from "./UserSettingDialog/UserListArea";
+import ButtonArea from "./UserSettingDialog/ButtonArea";
 const UserSettingDialog = () => {
     const { enqueueSnackbar } = useSnackbar();
     // 사용자 Dialog 활성화 여부
     const [showSetUserModal, setShowSetUserModal] = useRecoilState(
         rc_user_showSetUserModal
     );
-    const setRepoList = useSetRecoilState(rc_repo_savedRepoList);
 
-    // 사용자 변경, 사용자 추가, 사용자 삭제
+    // 사용자 리스트 set
+    const setRepoList = useSetRecoilState(rc_repo_savedRepoList);
 
     // 현재 사용자
     const [currentUser, setCurrentUser] = useRecoilState(rc_user_user);
@@ -130,60 +119,24 @@ const UserSettingDialog = () => {
         <>
             <Dialog open={showSetUserModal} onClose={onClose}>
                 <UserSettingDialogBlock>
-                    <h4>CurrentUser</h4>
-                    <Typography variant="h5" color="text.secondary">
-                        {currentUser}
-                    </Typography>
+                    <TitleArea currentUser={currentUser} />
+
                     <Divider />
-                    <h4>Add User</h4>
-                    <form onSubmit={onSubmit}>
-                        <Input sx={{ m: 1, width: "80%" }} />
-                        <IconButton type="submit" style={{ width: "10%" }}>
-                            <AddIcon />
-                        </IconButton>
-                    </form>
+
+                    <InputArea onSubmit={onSubmit} />
+
                     <Divider />
-                    <h4>User List</h4>
-                    <List>
-                        {userList.map((item, idx) => (
-                            <ListItem
-                                key={`${item}${idx}`}
-                                secondaryAction={
-                                    <IconButton
-                                        onClick={() => onClickDelete(item)}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                }
-                                disablePadding
-                            >
-                                <ListItemButton
-                                    onClick={() => onClickList(item)}
-                                >
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            edge="start"
-                                            checked={item === selectedUser}
-                                            tabIndex={-1}
-                                            disableRipple
-                                            inputProps={{
-                                                "aria-labelledby": `${item}${idx}`,
-                                            }}
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        id={`${item}${idx}`}
-                                        primary={item}
-                                    />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
+
+                    <UserListArea
+                        userList={userList}
+                        selectedUser={selectedUser}
+                        onClickDelete={onClickDelete}
+                        onClickList={onClickList}
+                    />
+
                     <Divider />
-                    <div className="buttonArea">
-                        <Button onClick={onClickOK}>적용하기</Button>
-                        <Button onClick={onClose}>닫기</Button>
-                    </div>
+
+                    <ButtonArea onClickOK={onClickOK} onClose={onClose} />
                 </UserSettingDialogBlock>
             </Dialog>
         </>
@@ -194,19 +147,5 @@ const UserSettingDialogBlock = styled.div`
     width: 500px;
     padding: 10px;
     box-sizing: border-box;
-
-    form {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .buttonArea {
-        margin-top: 10px;
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
 `;
 export default UserSettingDialog;
