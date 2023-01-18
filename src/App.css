@@ -27,6 +27,18 @@
     pointer-events: none;
 }
 
+.userImage {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
     .App-logo {
         animation: App-logo-spin infinite 20s linear;

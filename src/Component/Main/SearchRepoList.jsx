@@ -79,6 +79,8 @@ const SearchRepoList = ({ saveTargetRef }) => {
                                     (findItem) => findItem.id === item.id
                                 );
 
+                                console.log("item: ", item);
+
                                 if (isDup) {
                                     return null;
                                 } else {
@@ -95,6 +97,9 @@ const SearchRepoList = ({ saveTargetRef }) => {
                                                     onMouseDown={onMouseDown(
                                                         item
                                                     )}
+                                                    userImage={
+                                                        item.owner.avatar_url
+                                                    }
                                                     title={item.name}
                                                     content={item.owner.login}
                                                 />

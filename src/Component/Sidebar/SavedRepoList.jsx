@@ -34,6 +34,7 @@ const SavedRepoList = ({ showSaveArea, savedRepoList, onClick }) => {
                                         provided={provided}
                                         snapshot={snapshotDG}
                                         onClick={() => onClick(item)}
+                                        userImage={item.owner.avatar_url}
                                         title={item.name}
                                         content={item.owner.login}
                                     />

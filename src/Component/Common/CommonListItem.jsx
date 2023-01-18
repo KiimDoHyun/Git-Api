@@ -5,6 +5,7 @@ const CommonListItem = ({
     provided,
     snapshot,
     onMouseDown,
+    userImage,
     title,
     content,
     onClick,
@@ -34,7 +35,17 @@ const CommonListItem = ({
                 <Typography gutterBottom variant="h5" component="div">
                     {title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                    variant="body2"
+                    component="div"
+                    className="userInfo"
+                    color="text.secondary"
+                >
+                    <img
+                        className="userImage"
+                        src={userImage}
+                        alt="userImage"
+                    />
                     {content}
                 </Typography>
             </CardContent>
