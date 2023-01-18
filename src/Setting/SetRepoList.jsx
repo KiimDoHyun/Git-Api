@@ -24,7 +24,7 @@ const SetRepoList = () => {
         const userList = getLocalStorage("userList");
 
         setRepoList(data || []);
-        setCurrentUser(currentUser || ["user1"]);
+        setCurrentUser(currentUser || "user1");
         setUserList(userList);
     }, [setRepoList, setCurrentUser, setUserList]);
 
