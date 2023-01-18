@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HomeIcon from "@mui/icons-material/Home";
-
+import PersonIcon from "@mui/icons-material/Person";
 const SidebarHeader = ({
     onClickSetting,
     onClickHome,
@@ -33,7 +33,13 @@ const SidebarHeader = ({
             </div>
             <div className="subArea">
                 <Tooltip title="현재 사용자 입니다.">
-                    <Typography variant="body1" color="text.secondary">
+                    <Typography
+                        variant="body1"
+                        component="div"
+                        className="userName"
+                        color="text.secondary"
+                    >
+                        <PersonIcon />
                         {currentUser}
                     </Typography>
                 </Tooltip>
@@ -59,6 +65,12 @@ const SidebarHeaderBlock = styled.div`
 
     .homeIcon {
         margin-left: auto;
+    }
+
+    .userName {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 `;
 export default React.memo(SidebarHeader);
