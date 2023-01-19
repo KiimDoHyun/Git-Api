@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 import Loading from "../../Common/Loading";
+import NoData from "../../Common/NoData";
 
 const LanguageChart = ({ getLanguagesResult }) => {
     // 차트 값
@@ -57,7 +58,17 @@ const LanguageChart = ({ getLanguagesResult }) => {
             {getLanguagesResult.isLoading ? (
                 <Loading />
             ) : (
-                <ReactApexChart options={options} series={series} type="pie" />
+                <>
+                    {Object.keys(getLanguagesResult.data).length > 0 ? (
+                        <ReactApexChart
+                            options={options}
+                            series={series}
+                            type="pie"
+                        />
+                    ) : (
+                        <NoData />
+                    )}
+                </>
             )}
         </LanguageChartBlock>
     );
@@ -66,6 +77,7 @@ const LanguageChart = ({ getLanguagesResult }) => {
 const LanguageChartBlock = styled.div`
     position: relative;
     width: 400px;
+    min-height: 300px;
 
     margin-top: 20px;
 `;
