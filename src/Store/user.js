@@ -10,7 +10,7 @@ export const rc_user_userList = atom({
     default: [],
 });
 
-export const rc_user_showSetUserModal = atom({
-    key: "rc_user_showSetUserModal",
+export const rc_user_showSetUserDialog = atom({
+    key: "rc_user_showSetUserDialog",
     default: false,
 });

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { rc_repo_savedRepoList } from "../Store/repo";
 import { rc_drag_showDeleteArea, rc_drag_showSaveArea } from "../Store/drag";
 import { useLocation, useNavigate } from "react-router-dom";
-import { rc_user_showSetUserModal, rc_user_user } from "../Store/user";
+import { rc_user_showSetUserDialog, rc_user_user } from "../Store/user";
 import SidebarHeader from "./Sidebar/SidebarHeader";
 import SavedRepoList from "./Sidebar/SavedRepoList";
 import DeleteArea from "./Sidebar/DeleteArea";
@@ -19,7 +19,7 @@ const SideBar = () => {
     const currentUser = useRecoilValue(rc_user_user);
 
     // 사용자 Dialog 활성화 여부
-    const setShowSetUserModal = useSetRecoilState(rc_user_showSetUserModal);
+    const setShowSetUserDialog = useSetRecoilState(rc_user_showSetUserDialog);
 
     const showDeleteArea = useRecoilValue(rc_drag_showDeleteArea);
     const showSaveArea = useRecoilValue(rc_drag_showSaveArea);
@@ -36,8 +36,8 @@ const SideBar = () => {
     );
 
     const onClickSetting = useCallback(() => {
-        setShowSetUserModal(true);
-    }, [setShowSetUserModal]);
+        setShowSetUserDialog(true);
+    }, [setShowSetUserDialog]);
 
     const onClickHome = useCallback(() => {
         navigate("/");

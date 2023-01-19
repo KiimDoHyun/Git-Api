@@ -2,7 +2,7 @@ import { Dialog, DialogContent, Divider } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-    rc_user_showSetUserModal,
+    rc_user_showSetUserDialog,
     rc_user_user,
     rc_user_userList,
 } from "../../Store/user";
@@ -22,8 +22,8 @@ const UserSettingDialog = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     // 사용자 Dialog 활성화 여부
-    const [showSetUserModal, setShowSetUserModal] = useRecoilState(
-        rc_user_showSetUserModal
+    const [showSetUserDialog, setShowSetUserDialog] = useRecoilState(
+        rc_user_showSetUserDialog
     );
 
     // 사용자 리스트 set
@@ -101,7 +101,7 @@ const UserSettingDialog = () => {
     // 적용하기
     const onClickOK = useCallback(() => {
         if (selectedUser === currentUser) {
-            setShowSetUserModal(false);
+            setShowSetUserDialog(false);
             return;
         }
         // 사용자를 변경한다.
@@ -115,7 +115,7 @@ const UserSettingDialog = () => {
         const data = getLocalStorage(`${selectedUser}_repoList`);
 
         setRepoList(data || []);
-        setShowSetUserModal(false);
+        setShowSetUserDialog(false);
         enqueueSnackbar("사용자가 변경되었습니다.", { variant: "success" });
         navigate("/");
     }, [
@@ -125,14 +125,14 @@ const UserSettingDialog = () => {
         navigate,
         setCurrentUser,
         setRepoList,
-        setShowSetUserModal,
+        setShowSetUserDialog,
     ]);
 
     // 닫기
     const onClose = useCallback(() => {
-        setShowSetUserModal(false);
+        setShowSetUserDialog(false);
         setSelectedUser(currentUser);
-    }, [currentUser, setShowSetUserModal]);
+    }, [currentUser, setShowSetUserDialog]);
 
     // 사용자 리스트 선택
     const onClickList = useCallback((item) => {
@@ -172,7 +172,7 @@ const UserSettingDialog = () => {
     }, [currentUser]);
     return (
         <>
-            <Dialog open={showSetUserModal} onClose={onClose}>
+            <Dialog open={showSetUserDialog} onClose={onClose}>
                 <TitleArea />
                 <Divider />
 
