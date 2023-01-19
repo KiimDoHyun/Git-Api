@@ -1,11 +1,52 @@
-## 기능
+## 1. 프로젝트 실행방법
 
-1. 검색창에 Repository명을 입력해서 Repository를 검색할 수 있다.
-2. 검색된 Public Repository를 등록할 수 있다.
-    - 등록 개수는 최대 4개로 제한하며, 최대 개수 초과 등록 시 이를 사용자에게 알려준다.
-    - 웹은 LocalStorage, 앱은 Async Storage 등 로컬 저장소를 활용한다. (웹 혹은 앱 선택)
-3. 등록된 Repository를 삭제할 수 있다.
-4. 등록된 각각의 Public Repository의 issue를 한 페이지에서 모아서 볼 수 있다.
-    - 각 issue 마다 제목, Repository 명은 필수로 표현되어야 한다. 그 이외의 데이터 중 필요하다고 생각되는 부분은 추가한다.
-    - 해당 issue를 클릭하면 Github의 상세 페이지로 이동할 수 있다.
-    - 페이지네이션을 통해서 계속해서 issue를 모아서 볼 수 있다.
+1. node_modules 설치를 위해 package.json이 있는 위치에서 "npm i"
+2. 프로젝트 실행을 위해 "npm start"
+
+## 2. 프로젝트 개발 환경
+
+<ul>
+    <li>
+        npm : 8.19.2
+    </li>
+    <li>
+        node : 18.12.0
+    </li>
+    <li>
+        react : 18.2.0
+    </li>
+</ul>
+
+## 3. 주요 추가 설치 라이브러리
+
+<ul>
+    <li>
+        상태관리 : Recoil
+    </li>
+    <li>
+        디자인 : materialUI, styled-components, notistack
+    </li>
+    <li>
+        차트 : apexcharts
+    </li>
+    <li>
+        드래그앤 드롭 : react-beautiful-dnd
+    </li>
+</ul>
+
+## 4. 참고
+
+1. 자바스크립트로 구현했습니다.
+2. 프로젝트 생성은 cra를 이용했습니다.
+3. 비동기 통신은 커스텀 훅으로 관리했습니다. (useAxios)
+4. 상태관리는 Recoil을 이용했습니다.
+5. 사용자 편의성을 고려, 드래그앤 드롭 이벤트를 이용했습니다.
+6. 반응형 디자인은 고려되지 않았습니다.
+
+## 5. 추가 구현사항
+
+1. 4개 Repo를 "사용자"별로 저장하도록 구현했습니다.
+    - 사용자는 최대 5명 까지 등록 가능합니다.
+    - LocalStorage로 구현했습니다.
+2. 조회된 Repo의 상세 정보를 볼 수 있는 Dialog를 추가했습니다.
+3. Issue의 Label은 배경색을 계산해서 흰색과 검은색 중 가시성이 좋은 색을 글자색으로 지정하도록 했습니다.
