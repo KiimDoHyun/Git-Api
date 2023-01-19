@@ -1,17 +1,4 @@
-import {
-    Button,
-    Chip,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    Grid,
-    Link,
-    Skeleton,
-    Stack,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Divider } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -54,14 +41,6 @@ const RepoInfo = () => {
         getLanguages({ user: repoInfo.owner.login, repo: repoInfo.name });
     }, [repoInfo]);
 
-    /*
-    Repo 명
-    Owner 명
-    사용 Language -> 원차트?
-    토픽
-    Repo 주소
-    */
-
     if (!repoInfo) return null;
 
     return (
@@ -71,12 +50,16 @@ const RepoInfo = () => {
                 <Divider />
                 <DialogContent>
                     <DialogContainer>
+                        {/* 왼쪽 영역 */}
                         <div className="leftArea">
+                            {/* User 정보 */}
                             <OwnerInfo
                                 imgSrc={repoInfo.owner.avatar_url}
                                 ownerName={repoInfo.owner.login}
                                 url={repoInfo.html_url}
                             />
+
+                            {/* Count */}
                             <CountInfo
                                 title={"starts"}
                                 IconComponet={() => <StarOutlineIcon />}
@@ -98,12 +81,16 @@ const RepoInfo = () => {
                                 count={repoInfo.open_issues_count}
                             />
                         </div>
+
+                        {/* 오른쪽 영역 */}
                         <div className="rightArea">
+                            {/* 저장소 정보 */}
                             <Repo
                                 name={repoInfo.name}
                                 topics={repoInfo.topics}
                                 description={repoInfo.description}
                             />
+                            {/* 차트 */}
                             <LanguageChart
                                 getLanguagesResult={getLanguagesResult}
                             />
