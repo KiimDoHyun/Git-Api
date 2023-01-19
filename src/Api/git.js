@@ -11,3 +11,7 @@ export const getIssueApi = ({ user, repo, page = 1 }) =>
     client.get(
         `https://api.github.com/repos/${user}/${repo}/issues?page=${page}`
     );
+
+// Language 조회
+export const getLanguagesApi = ({ user, repo }) =>
+    client.get(`https://api.github.com/repos/${user}/${repo}/languages`);

@@ -42,7 +42,6 @@ const SearchRepoListArea = ({ saveTargetRef }) => {
     // 아이템 onClick 이벤트
     const onClickItem = useCallback(
         (item) => {
-            console.log("item: ", item);
             setShowRepoInfoDialog(true);
             setRepoInfo(item);
         },
