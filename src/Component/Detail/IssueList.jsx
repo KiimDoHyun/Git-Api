@@ -20,7 +20,7 @@ const IssueList = ({ ownerName, repoName, open_issues_count }) => {
 
             getIssue({ user: ownerName, repo: repoName, page: value });
         },
-        [ownerName, repoName]
+        [ownerName, repoName, getIssue]
     );
 
     // Issue 클릭
@@ -31,7 +31,7 @@ const IssueList = ({ ownerName, repoName, open_issues_count }) => {
     useEffect(() => {
         getIssue({ user: ownerName, repo: repoName, page: 1 });
         setSearchPage(1);
-    }, [ownerName, repoName]);
+    }, [ownerName, repoName, getIssue]);
 
     return (
         <IssueListBlock>

@@ -31,13 +31,13 @@ const RepoInfo = () => {
     const onClose = useCallback(() => {
         setShowRepoInfoDialog(false);
         setRepoInfo(null);
-    }, [setShowRepoInfoDialog]);
+    }, [setShowRepoInfoDialog, setRepoInfo]);
 
     useEffect(() => {
         if (!repoInfo) return;
 
         getLanguages({ user: repoInfo.owner.login, repo: repoInfo.name });
-    }, [repoInfo]);
+    }, [repoInfo, getLanguages]);
 
     if (!repoInfo) return null;
 
