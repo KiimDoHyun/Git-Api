@@ -59,7 +59,8 @@ const LanguageChart = ({ getLanguagesResult }) => {
                 <Loading />
             ) : (
                 <>
-                    {Object.keys(getLanguagesResult.data).length > 0 ? (
+                    {getLanguagesResult.data &&
+                    Object.keys(getLanguagesResult.data).length > 0 ? (
                         <ReactApexChart
                             options={options}
                             series={series}
@@ -81,4 +82,4 @@ const LanguageChartBlock = styled.div`
 
     margin-top: 20px;
 `;
-export default LanguageChart;
+export default React.memo(LanguageChart);

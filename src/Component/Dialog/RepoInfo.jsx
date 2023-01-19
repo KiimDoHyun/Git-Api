@@ -28,6 +28,7 @@ import OwnerInfo from "../Detail/OwnerInfo";
 import Repo from "./RepoInfo/Repo";
 import LanguageChart from "./RepoInfo/LanguageChart";
 import ButtonArea from "./UserSetting/ButtonArea";
+import CountInfo from "./RepoInfo/CountInfo";
 
 const RepoInfo = () => {
     // Dialog 활성화 변수
@@ -76,47 +77,26 @@ const RepoInfo = () => {
                                 ownerName={repoInfo.owner.login}
                                 url={repoInfo.html_url}
                             />
-
-                            <Tooltip title="stars" placement="right">
-                                <div className="itemCountBox">
-                                    <div className="icon">
-                                        <StarOutlineIcon />
-                                    </div>
-                                    <div className="text">
-                                        {repoInfo.stargazers_count}{" "}
-                                    </div>
-                                </div>
-                            </Tooltip>
-                            <Tooltip title="watching" placement="right">
-                                <div className="itemCountBox">
-                                    <div className="icon">
-                                        <VisibilityOutlinedIcon />
-                                    </div>
-                                    <div className="text">
-                                        {repoInfo.watchers_count}
-                                    </div>
-                                </div>
-                            </Tooltip>
-                            <Tooltip title="forks" placement="right">
-                                <div className="itemCountBox">
-                                    <div className="icon">
-                                        <AccountTreeOutlinedIcon />{" "}
-                                    </div>
-                                    <div className="text">
-                                        {repoInfo.forks_count}
-                                    </div>
-                                </div>
-                            </Tooltip>
-                            <Tooltip title="issues" placement="right">
-                                <div className="itemCountBox">
-                                    <div className="icon">
-                                        <AdjustOutlinedIcon />{" "}
-                                    </div>
-                                    <div className="text">
-                                        {repoInfo.open_issues_count}
-                                    </div>
-                                </div>
-                            </Tooltip>
+                            <CountInfo
+                                title={"starts"}
+                                IconComponet={() => <StarOutlineIcon />}
+                                count={repoInfo.stargazers_count}
+                            />
+                            <CountInfo
+                                title={"watching"}
+                                IconComponet={() => <VisibilityOutlinedIcon />}
+                                count={repoInfo.watchers_count}
+                            />
+                            <CountInfo
+                                title={"forks"}
+                                IconComponet={() => <AccountTreeOutlinedIcon />}
+                                count={repoInfo.forks_count}
+                            />
+                            <CountInfo
+                                title={"issues"}
+                                IconComponet={() => <AdjustOutlinedIcon />}
+                                count={repoInfo.open_issues_count}
+                            />
                         </div>
                         <div className="rightArea">
                             <Repo
@@ -131,9 +111,6 @@ const RepoInfo = () => {
                     </DialogContainer>
                     <Divider />
                     <ButtonArea onClose={onClose} />
-                    {/* <div className="ButtonArea">
-                        <Button onClick={onClose}>Close</Button>
-                    </div> */}
                 </DialogContent>
             </Dialog>
         </>
@@ -161,42 +138,6 @@ const DialogContainer = styled.div`
 
     .rightArea {
         overflow: scroll;
-    }
-
-    .userImage {
-        width: 200px;
-        height: 200px;
-    }
-
-    .userImage img {
-        width: 100%;
-        height: 100%;
-        border-radius: 100%;
-    }
-
-    .itemCountBox,
-    .repoLink,
-    .userName {
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .itemCountBox {
-        justify-content: space-between;
-        width: 100px;
-
-        test-align: left;
-    }
-
-    .itemCountBox > div {
-        flex: 1;
-    }
-
-    .repoTopics > div {
-        flex-wrap: wrap;
-        row-gap: 5px;
     }
 `;
 

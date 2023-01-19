@@ -3,7 +3,6 @@ import React from "react";
 import styled from "styled-components";
 
 const Repo = ({ name, topics, description }) => {
-    console.log("topics: ", topics);
     return (
         <>
             <div className="repoName">
@@ -11,7 +10,7 @@ const Repo = ({ name, topics, description }) => {
                     {name}
                 </Typography>
             </div>
-            <div className="repoTopics">
+            <RepoTopicsBlock>
                 {topics && topics.length > 0 ? (
                     <Stack direction={"row"} spacing={1}>
                         {topics.map((item, idx) => (
@@ -23,11 +22,18 @@ const Repo = ({ name, topics, description }) => {
                         No Topics
                     </Typography>
                 )}
-            </div>
+            </RepoTopicsBlock>
             <RepoDescBlock>{description}</RepoDescBlock>
         </>
     );
 };
+
+const RepoTopicsBlock = styled.div`
+    > div {
+        flex-wrap: wrap;
+        row-gap: 5px;
+    }
+`;
 
 const RepoDescBlock = styled.div`
     width: 400px;
