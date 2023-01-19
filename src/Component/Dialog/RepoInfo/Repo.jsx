@@ -33,6 +33,11 @@ const RepoTopicsBlock = styled.div`
         flex-wrap: wrap;
         row-gap: 5px;
     }
+
+    .MuiChip-root {
+        color: #0969da;
+        background-color: #ddf4ff;
+    }
 `;
 
 const RepoDescBlock = styled.div`
