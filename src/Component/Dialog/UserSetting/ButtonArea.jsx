@@ -5,12 +5,16 @@ import styled from "styled-components";
 const ButtonArea = ({ onClickOK, onClose }) => {
     return (
         <ButtonAreaBlock>
-            <Tooltip title="사용자 변경을 적용합니다.">
-                <Button onClick={onClickOK}>Apply</Button>
-            </Tooltip>
-            <Tooltip title="사용자 변경을 적용하지 않습니다.">
-                <Button onClick={onClose}>Close</Button>
-            </Tooltip>
+            {onClickOK && (
+                <Tooltip title="사용자 변경을 적용합니다.">
+                    <Button onClick={onClickOK}>Apply</Button>
+                </Tooltip>
+            )}
+            {onClose && (
+                <Tooltip title="사용자 변경을 적용하지 않습니다.">
+                    <Button onClick={onClose}>Close</Button>
+                </Tooltip>
+            )}
         </ButtonAreaBlock>
     );
 };

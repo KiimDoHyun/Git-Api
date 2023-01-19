@@ -25,12 +25,12 @@ const OwnerInfo = ({ imgSrc, ownerName, url }) => {
 };
 
 const OwnerInfoBlock = styled.div`
-    height: 100%;
+    // height: 100%;
 
     padding: 10px;
     box-sizing: border-box;
 
-    flex: 1;
+    // flex: 1;
 
     display: flex;
     flex-direction: column;
