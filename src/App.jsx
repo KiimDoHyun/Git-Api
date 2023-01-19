@@ -4,7 +4,8 @@ import Router from "./Router/Router";
 import SideBar from "./Component/SideBar";
 import { DragDropContext } from "react-beautiful-dnd";
 import useOnDrag from "./Hook/useOnDrag";
-import UserSettingDialog from "./Component/UserSettingDialog";
+import UserSetting from "./Component/Dialog/UserSetting";
+import RepoInfo from "./Component/Dialog/RepoInfo";
 function App() {
     const [saveTargetRef, onDragStart, onDragEnd] = useOnDrag();
 
@@ -21,8 +22,10 @@ function App() {
                 <Router saveTargetRef={saveTargetRef} />
             </DragDropContext>
 
-            {/* 사용자 설정 Dialog */}
-            <UserSettingDialog />
+            {/*Dialog */}
+            {/*  사용자 설정  */}
+            <UserSetting />
+            <RepoInfo />
         </div>
     );
 }

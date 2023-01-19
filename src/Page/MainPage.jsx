@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import SearchArea from "../Component/Main/SearchArea";
-import SearchRepoList from "../Component/Main/SearchRepoList";
+import SearchRepoListArea from "../Component/Main/SearchRepoListArea";
 
 const MainPage = ({ saveTargetRef }) => {
     return (
@@ -10,7 +10,7 @@ const MainPage = ({ saveTargetRef }) => {
             <SearchArea />
 
             {/* Repo 조회 결과 영역 */}
-            <SearchRepoList saveTargetRef={saveTargetRef} />
+            <SearchRepoListArea saveTargetRef={saveTargetRef} />
         </MainPageBlock>
     );
 };

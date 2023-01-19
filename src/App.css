@@ -12,6 +12,11 @@
     height: 100px;
 
     text-align: left;
+    border: 2px solid #fff0;
+}
+
+.repoItem:hover {
+    border: 2px solid darkseagreen !important;
 }
 
 .draggingRepoItem {

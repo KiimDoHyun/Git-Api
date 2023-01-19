@@ -5,19 +5,19 @@ import {
     rc_user_showSetUserModal,
     rc_user_user,
     rc_user_userList,
-} from "../Store/user";
-import { rc_repo_savedRepoList } from "../Store/repo";
+} from "../../Store/user";
+import { rc_repo_savedRepoList } from "../../Store/repo";
 import { useSnackbar } from "notistack";
-import TitleArea from "./UserSettingDialog/TitleArea";
-import InputArea from "./UserSettingDialog/InputArea";
-import UserListArea from "./UserSettingDialog/UserListArea";
-import ButtonArea from "./UserSettingDialog/ButtonArea";
+import TitleArea from "./UserSetting/TitleArea";
+import InputArea from "./UserSetting/InputArea";
+import UserListArea from "./UserSetting/UserListArea";
+import ButtonArea from "./UserSetting/ButtonArea";
 import { useNavigate } from "react-router-dom";
 import {
     getLocalStorage,
     removeLocalStorage,
     setLocalStorage,
-} from "../Common/common";
+} from "../../Common/common";
 const UserSettingDialog = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
