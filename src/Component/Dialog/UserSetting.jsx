@@ -190,7 +190,12 @@ const UserSettingDialog = () => {
 
                     <Divider />
 
-                    <ButtonArea onClickOK={onClickOK} onClose={onClose} />
+                    <ButtonArea
+                        onClickOK={onClickOK}
+                        onClose={onClose}
+                        ApplyTitle={"사용자 변경을 적용합니다."}
+                        CloseTitle={"사용자 변경을 적용하지 않습니다."}
+                    />
                 </DialogContent>
             </Dialog>
         </>
