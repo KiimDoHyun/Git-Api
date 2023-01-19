@@ -96,12 +96,6 @@ const IssueListBlock = styled.div`
 
         box-sizing: border-box;
         border: 2px solid #fff0;
-
-        transition: 0.2s;
-    }
-
-    .repoItem:hover {
-        border: 2px solid darkseagreen;
     }
 
     .issueWriter {
