@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, Divider } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { getLanguagesApi } from "../../Api/git";
@@ -9,8 +9,6 @@ import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import AdjustOutlinedIcon from "@mui/icons-material/AdjustOutlined";
-import ReactApexChart from "react-apexcharts";
-import Loading from "../Common/Loading";
 import OwnerInfo from "../Detail/OwnerInfo";
 import Repo from "./RepoInfo/Repo";
 import LanguageChart from "./RepoInfo/LanguageChart";
